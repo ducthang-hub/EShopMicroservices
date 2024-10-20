@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{477AC13D-EE34-49F7-9DC5-C3282E9134F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Catalog", "Catalog", "{B8EEC244-981D-4B97-B815-BAAE7D812482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.API", "Catalog.API\Catalog.API.csproj", "{FD24F6B7-3FB7-46E3-BA0F-570F51B52442}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks", "BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj", "{545CDCD3-D170-43AE-A5B1-9B7E1619B730}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{13D621AE-E364-46A0-BE4D-83D650779908}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		docker-compose.override.yml = docker-compose.override.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8EEC244-981D-4B97-B815-BAAE7D812482} = {477AC13D-EE34-49F7-9DC5-C3282E9134F5}
+		{FD24F6B7-3FB7-46E3-BA0F-570F51B52442} = {B8EEC244-981D-4B97-B815-BAAE7D812482}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD24F6B7-3FB7-46E3-BA0F-570F51B52442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD24F6B7-3FB7-46E3-BA0F-570F51B52442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD24F6B7-3FB7-46E3-BA0F-570F51B52442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD24F6B7-3FB7-46E3-BA0F-570F51B52442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{545CDCD3-D170-43AE-A5B1-9B7E1619B730}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{545CDCD3-D170-43AE-A5B1-9B7E1619B730}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{545CDCD3-D170-43AE-A5B1-9B7E1619B730}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{545CDCD3-D170-43AE-A5B1-9B7E1619B730}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
