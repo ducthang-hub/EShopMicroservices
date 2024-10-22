@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
 using Catalog.API.Domains;
 using Catalog.API.Persistent.DatabaseContext;
 using Mapster;

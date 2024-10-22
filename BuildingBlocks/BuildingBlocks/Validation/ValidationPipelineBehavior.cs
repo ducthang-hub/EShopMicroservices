@@ -1,30 +1,23 @@
 ﻿using FluentValidation;
 using MediatR;
-using ValidationException = FluentValidation.ValidationException;
 
 namespace BuildingBlocks.Validation;
 
-public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-where TRequest : notnull
+public class ValidationPipelineBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationPipelineBehavior(IEnumerable<IValidator<TRequest>> validators)
-    {
-        _validators = validators;
-    }
-    
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var context = new ValidationContext<TRequest>(request);
 
-        var validationResult = await Task.WhenAll(_validators.Select(i => i.ValidateAsync(context, cancellationToken)));
+        var validationResult = await Task.WhenAll(validators.Select(i => i.ValidateAsync(context, cancellationToken)));
 
-        var failures = validationResult.Where(i => i.Errors.Any())
+        var failures = validationResult
+            .Where(i => i.Errors.Count != 0)
             .SelectMany(i => i.Errors)
             .ToList();
 
-        if (failures.Any())
+        if (failures.Count != 0)
         {
             throw new ValidationException(failures);
         }

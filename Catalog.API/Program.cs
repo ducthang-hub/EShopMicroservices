@@ -1,3 +1,4 @@
+using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.Validation;
 using Carter;
 using Catalog.API.Persistent.DatabaseContext;
@@ -18,6 +19,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddDbContextPool<CatalogDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 var app = builder.Build();
 
@@ -28,6 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler(_ => { });
 app.UseHttpsRedirection();
 app.MapCarter();
 app.Run();
