@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Queries.ProductQueries.GetAllProducts;
 
-public class GetAllProductsResponse : HandlerResponse
+public class GetAllProductsResponse : ErrorResponse
 {
 }
 

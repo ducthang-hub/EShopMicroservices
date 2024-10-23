@@ -3,6 +3,7 @@ using BuildingBlocks.Validation;
 using Carter;
 using Catalog.API.Persistent.DatabaseContext;
 using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +15,9 @@ builder.Services.AddCarter();
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
 });
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+
 builder.Services.AddDbContextPool<CatalogDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);

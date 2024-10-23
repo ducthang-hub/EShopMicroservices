@@ -14,7 +14,7 @@ public class CreateProductCommand(string name, double price) : ICommand<CreatePr
     public double Price { get; set; } = price;
 }
 
-public class CreateProductResponse : HandlerResponse
+public class CreateProductResponse : ErrorResponse
 {
 }
 
