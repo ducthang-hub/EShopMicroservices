@@ -1,16 +1,19 @@
 ﻿services:
-#  catalog.api:
-#    image: dducthang/eshop.catalog.api:v0.1
-#    build:
-#      context: .
-#      dockerfile: Catalog.API/Dockerfile
-#    ports:
-#      - 5001:5001
-#    depends_on:
-#      - database
+  #  catalog.api:
+  #    image: dducthang/eshop.catalog.api:v0.1
+  #    build:
+  #      context: .
+  #      dockerfile: Catalog.API/Dockerfile
+  #    ports:
+  #      - 5001:5001
+  #    depends_on:
+  #      - database
 
   database:
     image: postgres:latest
-    
+  redis_eshop:
+    image: redis:latest
+
 volumes:
   eshop_volume:
+  redis_eshop_volume:

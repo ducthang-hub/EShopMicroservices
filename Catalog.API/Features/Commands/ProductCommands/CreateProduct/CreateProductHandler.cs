@@ -4,7 +4,9 @@ using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using Catalog.API.Domains;
 using Catalog.API.Persistent.DatabaseContext;
+using Catalog.API.Services;
 using Mapster;
+using MediatR;
 
 namespace Catalog.API.Features.Commands.ProductCommands.CreateProduct;
 
@@ -18,7 +20,7 @@ public class CreateProductResponse : ErrorResponse
 {
 }
 
-public class CreateProductHandler(CatalogDbContext dbContext) : ICommandHandler<CreateProductCommand, CreateProductResponse>
+public class CreateProductHandler(CatalogDbContext dbContext, ITest testService) : ICommandHandler<CreateProductCommand, CreateProductResponse>
 {
     public async Task<CreateProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {

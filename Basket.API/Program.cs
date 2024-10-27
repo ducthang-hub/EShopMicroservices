@@ -1,18 +1,15 @@
+using System.Reflection;
+using Basket.API.Persistence.DatabaseContext;
+using Basket.API.Persistence.Repositories;
+using Basket.API.Services;
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.PipelineBehaviors;
 using Carter;
-using Catalog.API.Persistent.DatabaseContext;
-using Catalog.API.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddCarter();
-
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
@@ -20,14 +17,14 @@ builder.Services.AddMediatR(cfg =>
     cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
-builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
+builder.Services.AddDbContext<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
+builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.Configuration.GetConnectionString("Redis"));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
 builder.Services.AddScoped<ITest, Test>();
 
 var app = builder.Build();
-
-app.UseExceptionHandler(_ => { });
-app.UseHttpsRedirection();
 app.MapCarter();
+app.UseHttpsRedirection();
 app.Run();
