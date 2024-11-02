@@ -17,3 +17,15 @@
 volumes:
   eshop_volume:
   redis_eshop_volume:
+
+  discount.api:
+    image: discount.api
+    build:
+      context: .
+      dockerfile: Discount.API/Dockerfile
+
+  discount.grpc:
+    image: discount.grpc
+    build:
+      context: .
+      dockerfile: Discount.GRPC/Dockerfile

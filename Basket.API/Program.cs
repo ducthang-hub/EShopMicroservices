@@ -1,7 +1,4 @@
-using System.Reflection;
 using Basket.API.Persistence.DatabaseContext;
-using Basket.API.Persistence.Repositories;
-using Basket.API.Services;
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.PipelineBehaviors;
 using Carter;
@@ -17,14 +14,16 @@ builder.Services.AddMediatR(cfg =>
     cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
-builder.Services.AddDbContext<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
+builder.Services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.Configuration.GetConnectionString("Redis"));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
-builder.Services.AddScoped<ITest, Test>();
+// builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
+// builder.Services.AddScoped<ICommandHandler<CreateCartCommand, CreateCartResponse>, CreateCartHandler>();
+// builder.Services.AddScoped<ITest, Test>();
 
 var app = builder.Build();
+app.UseExceptionHandler(_ => { });
 app.MapCarter();
 app.UseHttpsRedirection();
 app.Run();

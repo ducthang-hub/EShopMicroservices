@@ -9,7 +9,7 @@ public class CreateBasketEndpoint(IMediator mediator) : ICarterModule
     {
         app.MapPost("basket/create", async (CancellationToken cancellationToken) =>
         {
-            var response = await mediator.Send(new CreateBasketCommand(), cancellationToken);
+            var response = await mediator.Send(new CreateCartCommand(), cancellationToken);
             return response;
         });
     }

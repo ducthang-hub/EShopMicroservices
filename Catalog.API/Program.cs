@@ -1,8 +1,8 @@
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.PipelineBehaviors;
+using BuildingBlocks.Services.Test;
 using Carter;
 using Catalog.API.Persistent.DatabaseContext;
-using Catalog.API.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddScoped<ITest, Test>();
+// builder.Services.AddSingleton<ITest, Test>();
 
 var app = builder.Build();
 

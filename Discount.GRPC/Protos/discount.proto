@@ -1,0 +1,45 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+option csharp_namespace = "Discount.GRPC";
+
+package discount;
+
+service DiscountProtoService {
+  rpc GetDiscounts(google.protobuf.Empty) returns (GetDiscountsResponse);
+  rpc GetDiscount(GetDiscountRequest) returns (CouponModel);
+  rpc CreateDiscount(CreateDiscountRequest) returns (CouponModel);
+  rpc UpdateDiscount(UpdateDiscountRequest) returns (CouponModel);
+  rpc DeleteDiscount(DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+message GetDiscountRequest {
+  string id = 1; 
+}
+
+message CouponModel {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double amount = 4;
+  bool isPercent = 5;
+}
+
+message CreateDiscountRequest {
+  CouponModel coupon = 1;
+}
+
+message UpdateDiscountRequest {
+  CouponModel coupon = 1;
+}
+
+message DeleteDiscountRequest {
+  string id = 1;
+}
+
+message DeleteDiscountResponse {
+  bool success = 1;
+}
+
+message GetDiscountsResponse {
+  repeated CouponModel coupons = 1;
+}

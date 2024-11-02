@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
+using BuildingBlocks.Services.Test;
 using Catalog.API.Persistent.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,13 +18,16 @@ public class GetAllProductsQuery : IQuery<GetAllProductsResponse>
 public class GetAllProductsHandler : IQueryHandler<GetAllProductsQuery, GetAllProductsResponse>
 {
     private readonly CatalogDbContext _dbContext;
-
+    private readonly ITest _test;
+    
     public GetAllProductsHandler
     (
-        CatalogDbContext dbContext
+        CatalogDbContext dbContext,
+        ITest test
     )
     {
         _dbContext = dbContext;
+        _test = test;
     }
     
     public async Task<GetAllProductsResponse> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)

@@ -1,12 +1,10 @@
 ﻿using System.Net;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
-using BuildingBlocks.Exceptions;
+using BuildingBlocks.Services.Test;
 using Catalog.API.Domains;
 using Catalog.API.Persistent.DatabaseContext;
-using Catalog.API.Services;
 using Mapster;
-using MediatR;
 
 namespace Catalog.API.Features.Commands.ProductCommands.CreateProduct;
 
@@ -20,16 +18,24 @@ public class CreateProductResponse : ErrorResponse
 {
 }
 
-public class CreateProductHandler(CatalogDbContext dbContext, ITest testService) : ICommandHandler<CreateProductCommand, CreateProductResponse>
+public class CreateProductHandler : ICommandHandler<CreateProductCommand, CreateProductResponse>
 {
+    private readonly ITest _test;
+    private readonly CatalogDbContext _dbContext;
+    
+    public CreateProductHandler(CatalogDbContext dbContext, ITest testService)
+    {
+        _dbContext = dbContext;
+        _test = testService;
+    }
     public async Task<CreateProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var response = new CreateProductResponse();
         try
         {
             var product = request.Adapt<Product>();
-            dbContext.Products.Add(product);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            _dbContext.Products.Add(product);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             response.Status = HttpStatusCode.Created;
             response.Data = new
             {
