@@ -29,3 +29,15 @@ volumes:
     build:
       context: .
       dockerfile: Discount.GRPC/Dockerfile
+
+  basket.api:
+    image: basket.api
+    build:
+      context: .
+      dockerfile: Basket.API/Dockerfile
+
+  basket.api:
+    image: basket.api
+    build:
+      context: .
+      dockerfile: Basket.API/Dockerfile

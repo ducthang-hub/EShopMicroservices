@@ -8,16 +8,15 @@ namespace Basket.API.Persistence.Repositories.Implements;
 
 public class Repository<T> : IRepository<T> where T : class
 {
+    private readonly BasketDbContext _dbContext;
     private readonly DbSet<T> _dbSet;
 
-    public Repository
-    (
-        BasketDbContext dbContext
-    )
+    public Repository(BasketDbContext dbContext)
     {
-        _dbSet = dbContext.Set<T>();
+        _dbContext = dbContext;
+        _dbSet = _dbContext.Set<T>();
     }
-    
+
     public virtual IQueryable<T> GetAll()
     {
         return _dbSet;

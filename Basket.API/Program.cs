@@ -1,29 +1,32 @@
 using Basket.API.Persistence.DatabaseContext;
-using BuildingBlocks.Exceptions.Handler;
-using BuildingBlocks.PipelineBehaviors;
+using Basket.API.Persistence.Repositories;
 using Carter;
-using FluentValidation;
+using Discount.GRPC;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddCarter();
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
-    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+});
+
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountService"] ?? string.Empty);
 });
 
 builder.Services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.Configuration.GetConnectionString("Redis"));
-builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-// builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
-// builder.Services.AddScoped<ICommandHandler<CreateCartCommand, CreateCartResponse>, CreateCartHandler>();
-// builder.Services.AddScoped<ITest, Test>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 var app = builder.Build();
-app.UseExceptionHandler(_ => { });
 app.MapCarter();
-app.UseHttpsRedirection();
 app.Run();

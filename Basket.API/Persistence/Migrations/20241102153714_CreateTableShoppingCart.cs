@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Basket.API.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTableShoppingCart : Migration
+    public partial class CreateTableShoppingCart : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,15 +20,14 @@ namespace Basket.API.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProductQuantity = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreateUser = table.Column<string>(type: "text", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ModifiedUser = table.Column<string>(type: "text", nullable: false),
-                    DeletedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeletedUser = table.Column<string>(type: "text", nullable: false)
+                    ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ModifiedUser = table.Column<string>(type: "text", nullable: true),
+                    DeletedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeletedUser = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

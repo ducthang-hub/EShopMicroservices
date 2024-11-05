@@ -5,5 +5,9 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.API.Persistence.Repositories.Implements;
 
-public class ShoppingCartRepository(BasketDbContext dbContext, IDistributedCache cache)
-    : CachedRepository<ShoppingCart>(dbContext, cache), IShoppingCartRepository;
+public class ShoppingCartRepository : CachedRepository<ShoppingCart>, IShoppingCartRepository 
+{
+    public ShoppingCartRepository(BasketDbContext dbContext, IDistributedCache cache) : base(dbContext, cache)
+    {
+    }
+}

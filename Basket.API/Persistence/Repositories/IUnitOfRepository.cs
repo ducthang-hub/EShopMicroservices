@@ -5,7 +5,7 @@ namespace Basket.API.Persistence.Repositories;
 
 public interface IUnitOfRepository
 {
-    public IShoppingCartRepository ShoppingCartRepository { get; set; }
+    public IShoppingCartRepository ShoppingCart { get; set; }
     Task CompleteAsync();
     Task<IDbContextTransaction> OpenTransactionAsync();
     Task CommitAsync();

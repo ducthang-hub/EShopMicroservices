@@ -6,13 +6,13 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace Basket.API.Persistence.Repositories;
 
-public class UnitOfRepository : IUnitOfRepository, IDisposable
+public class UnitOfRepository : IUnitOfRepository
 {
     private readonly BasketDbContext _dbContext;
     private IDbContextTransaction _transaction;
-
-    public IShoppingCartRepository ShoppingCartRepository { get; set; }
-
+    
+    public IShoppingCartRepository ShoppingCart { get; set; }
+    
     public UnitOfRepository
     ( 
         BasketDbContext dbContext,
@@ -20,7 +20,7 @@ public class UnitOfRepository : IUnitOfRepository, IDisposable
     )
     {
         _dbContext = dbContext;
-        ShoppingCartRepository = new ShoppingCartRepository(_dbContext, cache);
+        ShoppingCart = new ShoppingCartRepository(_dbContext, cache);
     }
     
     public async Task CompleteAsync()
@@ -33,6 +33,7 @@ public class UnitOfRepository : IUnitOfRepository, IDisposable
         _transaction = await _dbContext.Database.BeginTransactionAsync();
         return _transaction;
     }
+    
     public async Task CommitAsync()
     {
         await _transaction.CommitAsync();

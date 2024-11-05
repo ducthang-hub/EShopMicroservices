@@ -9,8 +9,8 @@ public class ShoppingCartConfiguration : IEntityTypeConfiguration<ShoppingCart>
     public void Configure(EntityTypeBuilder<ShoppingCart> builder)
     {
         builder.ToTable(nameof(ShoppingCart));
+
         builder.HasKey(i => i.Id);
-        builder.Property(i => i.UserId)
-            .IsRequired();
+        builder.Property(i => i.UserId).IsRequired();
     }
 }

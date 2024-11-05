@@ -8,26 +8,19 @@ using Newtonsoft.Json;
 
 namespace Basket.API.Persistence.Repositories.Implements;
 
-public class CachedRepository<T> : IRepository<T>
-    where T : class
-{
-    private const string HashKey = "Basket.ShoppingCart";
-    private readonly DbSet<T> _dbSet;
-    private readonly IDistributedCache _cache;
-
-    public CachedRepository
+public class CachedRepository<T>
     (
         BasketDbContext dbContext,
         IDistributedCache cache
-    )
-    {
-        _cache = cache;
-        _dbSet = dbContext.Set<T>();
-    }
-    
+    ) 
+    : IRepository<T>where T : class
+{
+    private const string HashKey = "Basket.ShoppingCart";
+    private readonly DbSet<T> _dbSet = dbContext.Set<T>();
+
     public IQueryable<T> GetAll()
     {
-        var cachedEntities = _cache.GetString(HashKey);
+        var cachedEntities = cache.GetString(HashKey);
         if (string.IsNullOrEmpty(cachedEntities)) return _dbSet;
         var entities = JsonConvert.DeserializeObject<List<T>>(cachedEntities);
         return entities.AsQueryable();
@@ -38,8 +31,8 @@ public class CachedRepository<T> : IRepository<T>
         try
         {
             await _dbSet.AddAsync(entity);
-            var entityAsString = JsonConvert.SerializeObject(entity);
-            await _cache.SetStringAsync(HashKey, entityAsString);
+            // var entityAsString = JsonConvert.SerializeObject(entity);
+            // await _cache.SetStringAsync(HashKey, entityAsString);
             return true;
         }
         catch (Exception ex)
@@ -82,25 +75,22 @@ public class CachedRepository<T> : IRepository<T>
 
     public IQueryable<T> Where(Expression<Func<T, bool>> expression)
     {
-        throw new NotImplementedException();
-    }
-
-
-    public IQueryable<T> Where(Func<T, bool> func)
-    {
-        var cacheEntities = _cache.GetString(HashKey);
-        if (!string.IsNullOrEmpty(cacheEntities))
+        var cacheEntities = cache.GetString(HashKey);
+        if (string.IsNullOrEmpty(cacheEntities)) return _dbSet.Where(expression);
+        
+        var entities = JsonConvert.DeserializeObject<T>(cacheEntities);
+        if (entities is null)
         {
-            var entities = JsonConvert.DeserializeObject<List<T>>(cacheEntities);
-            return entities.Where(func).AsQueryable();
+            return null;
         }
-        Expression<Func<T, bool>> expression = x => func(x);
-        return _dbSet.Where(expression);
+        var list = new List<T> { entities };
+        var func = expression.Compile();
+        return list.Where(func).AsQueryable();
     }
 
     public EntityEntry<T> Update(T entity)
     {
-        _cache.SetString(HashKey, JsonConvert.SerializeObject(entity));
+        cache.SetString(HashKey, JsonConvert.SerializeObject(entity));
         return _dbSet.Update(entity);
     }
 }

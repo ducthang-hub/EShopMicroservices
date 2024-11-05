@@ -23,7 +23,7 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-// builder.Services.AddSingleton<ITest, Test>();
+builder.Services.AddSingleton<ITest, Test>();
 
 var app = builder.Build();
 
