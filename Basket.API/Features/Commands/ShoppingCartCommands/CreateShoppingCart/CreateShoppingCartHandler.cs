@@ -20,7 +20,6 @@ public class CreateShoppingCartCommand : IRequest<CreateShoppingCartResponse>
 
 public class CreateShoppingCartHandler
     (
-        IUnitOfRepository unitOfRepository,
         ILogger<CreateShoppingCartHandler> logger,
         IConnectionMultiplexer multiplexer
     )
@@ -39,8 +38,8 @@ public class CreateShoppingCartHandler
             {
                 UserId = Guid.NewGuid().ToString()
             };
-            await unitOfRepository.ShoppingCart.Add(newCart);
-            await unitOfRepository.CompleteAsync();
+            // await unitOfRepository.ShoppingCart.Add(newCart);
+            // await unitOfRepository.CompleteAsync();
             await _redis.HashSetAsync("Basket.ShoppingCart", newCart.UserId, JsonConvert.SerializeObject(newCart));
             var cartDto = newCart.Adapt<ShoppingCartDto>();
 

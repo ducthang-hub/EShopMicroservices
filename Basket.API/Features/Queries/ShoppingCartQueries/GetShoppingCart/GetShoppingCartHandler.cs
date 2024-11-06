@@ -21,7 +21,6 @@ public class GetShoppingCartQuery(Guid id) : IQuery<GetShoppingCartResponse>
 
 public class GetShoppingCartHandler
     (
-        IUnitOfRepository unitOfRepository,
         ILogger<GetShoppingCartHandler> logger,
         DiscountProtoService.DiscountProtoServiceClient discountProtoServiceClient,
         IBasketRepository basketRepository
@@ -35,20 +34,19 @@ public class GetShoppingCartHandler
         
         try
         {
-            var carts = await basketRepository.GetAll();
+            var cart = await basketRepository.GetBasketAsync(request.Id, cancellationToken);
             var couponsData = discountProtoServiceClient.GetDiscounts(new Empty(), cancellationToken: cancellationToken);
-            if (!carts.Any() || couponsData is null)
+            if (cart is null || couponsData is null)
             {
                 response.Status = HttpStatusCode.NotFound;
                 response.Message = $"Cart with user {request.Id} not found";
             }
             else
             {
-                // var cartDto = carts.Adapt<ShoppingCartDto>();
                 response.Status = HttpStatusCode.OK;
                 response.Data = new
                 {
-                    Cart = carts,
+                    Cart = cart,
                     Coupons = couponsData.Coupons
                 };
             }

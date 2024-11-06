@@ -1,7 +1,5 @@
-﻿using System.Linq.Expressions;
-using Basket.API.Domains;
+﻿using Basket.API.Domains;
 using Basket.API.Persistence.DatabaseContext;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -10,38 +8,56 @@ namespace Basket.API.Persistence.Repositories;
 public class BasketRepository
     (
         BasketDbContext dbContext,
-        IConnectionMultiplexer multiplexer
+        ILogger<BasketRepository> logger
     )
     : IBasketRepository
 {
-    private const string HashKey = "Basket.ShoppingCart";
     private readonly DbSet<ShoppingCart> _dbSet = dbContext.ShoppingCarts;
-    private readonly IDatabase _redis = multiplexer.GetDatabase();
 
-    public async Task<IEnumerable<ShoppingCart>> GetAll()
+
+    public async Task<ShoppingCart?> GetBasketAsync(Guid id, CancellationToken cancellationToken)
     {
-        var cachedCarts = await _redis.HashGetAllAsync(HashKey);
-        if (cachedCarts.Length == 0)
+        try
         {
-            return _dbSet;
+            var cart = await _dbSet.Where(i => i.Id == id).FirstOrDefaultAsync(cancellationToken);
+            return cart;
         }
-
-        var carts = cachedCarts.Select(i => i.Value).ToList();
-        return carts.Adapt<List<ShoppingCart>>();
+        catch (Exception ex)
+        {
+            logger.LogError($"{nameof(GetBasketAsync)} Error: {ex.Message}");
+            return null;
+        }
     }
 
-    public Task<IEnumerable<ShoppingCart>> Where()
+    public async Task<bool> StoreBasketAsync(ShoppingCart cart, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _dbSet.AddAsync(cart, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(StoreBasketAsync)} Error: {ex.Message}");
+            return false;
+        }
     }
 
-    public Task AddAsync(IEnumerable<ShoppingCart> shoppingCarts)
+    public async Task<ShoppingCart?> DeleteBasketAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
-    }
+        try
+        {
+            var cartToDelete = await GetBasketAsync(id, cancellationToken);
+            if (cartToDelete is null) return null;
 
-    public Task DeleteAsync(Expression<Func<ShoppingCart, bool>> expression)
-    {
-        throw new NotImplementedException();
+            _dbSet.Remove(cartToDelete);
+            return cartToDelete;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(StoreBasketAsync)} Error: {ex.Message}");
+            return null;
+        }
     }
 }

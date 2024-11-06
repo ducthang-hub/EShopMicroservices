@@ -24,7 +24,6 @@ builder.Services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(builder.
 builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.Configuration.GetConnectionString("Redis"));
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IUnitOfRepository, UnitOfRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 var app = builder.Build();
