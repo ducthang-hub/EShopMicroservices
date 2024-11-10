@@ -1,12 +1,9 @@
 ﻿using System.Net;
-using Basket.API.DTOs;
 using Basket.API.Persistence.Repositories;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
 using Discount.GRPC;
 using Google.Protobuf.WellKnownTypes;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
 
 namespace Basket.API.Features.Queries.ShoppingCartQueries.GetShoppingCart;
 

@@ -5,8 +5,6 @@ using Basket.API.Persistence.Repositories;
 using BuildingBlocks.Contracts;
 using Mapster;
 using MediatR;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 
 namespace Basket.API.Features.Commands.ShoppingCartCommands.CreateShoppingCart;
 
@@ -21,11 +19,10 @@ public class CreateShoppingCartCommand : IRequest<CreateShoppingCartResponse>
 public class CreateShoppingCartHandler
     (
         ILogger<CreateShoppingCartHandler> logger,
-        IConnectionMultiplexer multiplexer
+        IBasketRepository basketRepository
     )
     : IRequestHandler<CreateShoppingCartCommand, CreateShoppingCartResponse>
 {
-    private readonly IDatabase _redis = multiplexer.GetDatabase();
 
     public async Task<CreateShoppingCartResponse> Handle(CreateShoppingCartCommand request, CancellationToken cancellationToken)
     {
@@ -34,13 +31,14 @@ public class CreateShoppingCartHandler
         
         try
         {
+            var userId = Guid.NewGuid().ToString();
             var newCart = new ShoppingCart
             {
-                UserId = Guid.NewGuid().ToString()
+                UserId = userId,
             };
-            // await unitOfRepository.ShoppingCart.Add(newCart);
-            // await unitOfRepository.CompleteAsync();
-            await _redis.HashSetAsync("Basket.ShoppingCart", newCart.UserId, JsonConvert.SerializeObject(newCart));
+            newCart.PopulateAudit(userId);
+            
+            await basketRepository.StoreBasketAsync(newCart, cancellationToken);
             var cartDto = newCart.Adapt<ShoppingCartDto>();
 
             response.Status = HttpStatusCode.OK;

@@ -25,6 +25,7 @@ builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.C
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("localhost:6380"));
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
 
 var app = builder.Build();
 app.MapCarter();

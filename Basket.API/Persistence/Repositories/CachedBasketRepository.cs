@@ -1,6 +1,4 @@
 ﻿using Basket.API.Domains;
-using Basket.API.Persistence.DatabaseContext;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -9,14 +7,13 @@ namespace Basket.API.Persistence.Repositories;
 public class CachedBasketRepository
     (
         IConnectionMultiplexer multiplexer,
-        BasketDbContext dbContext,
+        IBasketRepository repository,
         ILogger<CachedBasketRepository> logger
     ) 
     : IBasketRepository
 {
-    private readonly string HaskKey = "Basket.ShoppingCart";
+    private const string HaskKey = "Basket.ShoppingCart";
     private readonly IDatabase _redis = multiplexer.GetDatabase();
-    private readonly DbSet<ShoppingCart> _dbSet = dbContext.ShoppingCarts;
     
     public async Task<ShoppingCart?> GetBasketAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -26,7 +23,7 @@ public class CachedBasketRepository
             var cachedCarts = await _redis.HashGetAllAsync(HaskKey);
             if (cachedCarts.Length == 0)
             {
-                cart = await _dbSet.Where(i => i.Id == id).FirstOrDefaultAsync(cancellationToken);
+                cart = await repository.GetBasketAsync(id, cancellationToken);
                 return cart;
             }
 
@@ -44,9 +41,8 @@ public class CachedBasketRepository
     {
         try
         {
+            await repository.StoreBasketAsync(cart, cancellationToken);
             await _redis.HashSetAsync(HaskKey, cart.Id.ToString(), JsonConvert.SerializeObject(cart));
-            _dbSet.Add(cart);
-            dbContext.SaveChanges();
             return true;
         }
         catch (Exception ex)
@@ -56,8 +52,18 @@ public class CachedBasketRepository
         }
     }
 
-    public Task<ShoppingCart?> DeleteBasketAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ShoppingCart?> DeleteBasketAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _redis.HashDeleteAsync(HaskKey, id.ToString());
+            var cart = await repository.DeleteBasketAsync(id, cancellationToken);
+            return cart;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(CachedBasketRepository)} {nameof(DeleteBasketAsync)} Error: {ex.Message}");
+            return null;
+        }
     }
 }

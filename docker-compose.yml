@@ -36,8 +36,8 @@ volumes:
       context: .
       dockerfile: Basket.API/Dockerfile
 
-  basket.api:
-    image: basket.api
+  ordering.api:
+    image: ordering.api
     build:
       context: .
-      dockerfile: Basket.API/Dockerfile
+      dockerfile: Ordering.API/Dockerfile
