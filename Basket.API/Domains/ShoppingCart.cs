@@ -5,7 +5,6 @@ namespace Basket.API.Domains;
 public class ShoppingCart : AuditData
 {
     public Guid Id { get; set; }
-    public Guid UserId { get; set; }
-    public int ProductQuantity { get; set; }
+    public string UserId { get; set; } = string.Empty;
     public bool IsDeleted { get; set; }
 }

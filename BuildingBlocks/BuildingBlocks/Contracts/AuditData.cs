@@ -9,7 +9,7 @@ public class AuditData
     public DateTime? DeletedDate { get; set; }
     public string? DeletedUser { get; set; }
 
-    public void PopulateAudit(string userId, bool isModified)
+    public void PopulateAudit(string userId, bool isModified = false)
     {
         if (isModified)
         {
