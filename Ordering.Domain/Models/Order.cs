@@ -1,5 +1,6 @@
 ﻿using Ordering.Domain.Abstractions;
 using Ordering.Domain.Enums;
+using Ordering.Domain.Events;
 using Ordering.Domain.ValueObject;
 
 namespace Ordering.Domain.Models;
@@ -39,6 +40,7 @@ public class Order : Aggregate<Guid>
     {
         var newOrder = new Order(userId, shippingAddress, payment);
         newOrder.PopulateAudit(userId);
+        newOrder.AddDomainEvent(new CreatedOrderEvent(newOrder));
         return newOrder;
     }
     

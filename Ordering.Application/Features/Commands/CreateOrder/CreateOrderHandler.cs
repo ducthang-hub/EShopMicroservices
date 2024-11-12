@@ -15,7 +15,7 @@ public class CreateOrderHandler(OrderDbContext dbContext, ILogger<CreateOrderHan
         try
         {
             var newOrder = CreateOrder(request);
-    
+
             await dbContext.Orders.AddAsync(newOrder, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
 
