@@ -12,7 +12,7 @@ using Ordering.Infrastructure.Data.DatabaseContext;
 
 namespace Ordering.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(OrderDbContext))]
+    [DbContext(typeof(IOrderDbContext))]
     [Migration("20241109104059_CreateTableOrders")]
     partial class CreateTableOrders
     {

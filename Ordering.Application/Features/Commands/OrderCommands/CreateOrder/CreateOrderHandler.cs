@@ -5,10 +5,22 @@ using Ordering.Domain.Models;
 using Ordering.Domain.ValueObject;
 using Ordering.Infrastructure.Data.DatabaseContext;
 
-namespace Ordering.Application.Features.Commands.CreateOrder;
+namespace Ordering.Application.Features.Commands.OrderCommands.CreateOrder;
 
-public class CreateOrderHandler(OrderDbContext dbContext, ILogger<CreateOrderHandler> logger) : ICommandHandler<CreateOrderCommand, CreateOrderResponse>
+public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, CreateOrderResponse>
 {
+    private readonly IOrderDbContext _orderDbContext;
+    private readonly ILogger<CreateOrderHandler> _logger;
+
+    public CreateOrderHandler
+    (
+        IOrderDbContext orderDbContext,
+        ILogger<CreateOrderHandler> logger
+    )
+    {
+        _orderDbContext = orderDbContext;
+        _logger = logger;
+    }
     public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var response = new CreateOrderResponse();
@@ -16,15 +28,15 @@ public class CreateOrderHandler(OrderDbContext dbContext, ILogger<CreateOrderHan
         {
             var newOrder = CreateOrder(request);
 
-            await dbContext.Orders.AddAsync(newOrder, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            await _orderDbContext.Orders.AddAsync(newOrder, cancellationToken);
+            await _orderDbContext.SaveChangesAsync(cancellationToken);
 
             response.Status = HttpStatusCode.Created;
             response.Data = newOrder;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"{nameof(CreateOrderHandler)} Error: {ex.Message}");
+            _logger.LogError(ex, $"{nameof(CreateOrderHandler)} Error: {ex.Message}");
             response.Message = ex.Message;
         }
 

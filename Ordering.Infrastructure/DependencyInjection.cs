@@ -10,11 +10,8 @@ namespace Ordering.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices
-        (this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        // Add services to the container.
-        // services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
         services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventInterceptor>();
         var dataSource = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("DatabaseConnection"))
             .EnableDynamicJson()
@@ -26,9 +23,8 @@ public static class DependencyInjection
             option.AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>());
         });
 
-
-        // services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-
+        services.AddScoped<IOrderDbContext, OrderDbContext>();
+        
         return services;
     }
 }

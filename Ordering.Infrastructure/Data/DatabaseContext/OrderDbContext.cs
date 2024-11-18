@@ -4,11 +4,11 @@ using Ordering.Infrastructure.Data.Configurations;
 
 namespace Ordering.Infrastructure.Data.DatabaseContext;
 
-public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContext(options)
+public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContext(options), IOrderDbContext
 {
     private const string DefaultSchema = "order";
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

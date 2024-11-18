@@ -1,9 +1,8 @@
 ﻿using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
 using Ordering.Application.DTOs;
-using Ordering.Domain.ValueObject;
 
-namespace Ordering.Application.Features.Commands.CreateOrder;
+namespace Ordering.Application.Features.Commands.OrderCommands.CreateOrder;
 
 public class CreateOrderResponse : ErrorResponse{}
 

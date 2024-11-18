@@ -2,7 +2,7 @@
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Ordering.Application.Features.Commands.CreateOrder;
+using Ordering.Application.Features.Commands.OrderCommands.CreateOrder;
 
 namespace Ordering.API.Endpoints.CreateOrder;
 

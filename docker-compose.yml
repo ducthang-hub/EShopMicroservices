@@ -1,4 +1,28 @@
 ﻿services:
+  # discount.api:
+  #   image: discount.api
+  #   build:
+  #     context: .
+  #     dockerfile: Discount.API/Dockerfile
+
+  # discount.grpc:
+  #   image: discount.grpc
+  #   build:
+  #     context: .
+  #     dockerfile: Discount.GRPC/Dockerfile
+
+  # basket.api:
+  #   image: basket.api
+  #   build:
+  #     context: .
+  #     dockerfile: Basket.API/Dockerfile
+
+  # ordering.api:
+  #   image: ordering.api
+  #   build:
+  #     context: .
+  #     dockerfile: Ordering.API/Dockerfile
+
   #  catalog.api:
   #    image: dducthang/eshop.catalog.api:v0.1
   #    build:
@@ -11,33 +35,16 @@
 
   database:
     image: postgres:latest
+
   redis_eshop:
     image: redis:latest
+
+  rabbitmq_eshop:
+    image: rabbitmq:3.8-management
 
 volumes:
   eshop_volume:
   redis_eshop_volume:
+  rabbitmq_eshop_volume:
 
-  discount.api:
-    image: discount.api
-    build:
-      context: .
-      dockerfile: Discount.API/Dockerfile
 
-  discount.grpc:
-    image: discount.grpc
-    build:
-      context: .
-      dockerfile: Discount.GRPC/Dockerfile
-
-  basket.api:
-    image: basket.api
-    build:
-      context: .
-      dockerfile: Basket.API/Dockerfile
-
-  ordering.api:
-    image: ordering.api
-    build:
-      context: .
-      dockerfile: Ordering.API/Dockerfile

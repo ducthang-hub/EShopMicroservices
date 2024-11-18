@@ -14,3 +14,12 @@
       - 6380:6379
     volumes:
       - redis_eshop_volume:/data
+
+  rabbitmq_eshop:
+    container_name: rabbitmq_eshop
+    env_file: ./.env
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - rabbitmq_eshop_volume:/var/lib/rabbitmq
