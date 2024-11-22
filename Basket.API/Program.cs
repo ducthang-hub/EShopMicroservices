@@ -1,8 +1,14 @@
+using System;
+using Basket.API.Consumers;
 using Basket.API.Persistence.DatabaseContext;
 using Basket.API.Persistence.Repositories;
 using Carter;
 using Discount.GRPC;
+using MassTransit;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +24,24 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountService"] ?? string.Empty);
+});
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateOrderEventConsumer>();
+    // x.SetKebabCaseEndpointNameFormatter();
+    x.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host("localhost", 5672,"/", h => {
+            h.Username("guest"); 
+            h.Password("guest");
+        });
+        
+        cfg.ReceiveEndpoint("create-order", e =>
+        {
+            e.Consumer<CreateOrderEventConsumer>(ctx);
+        });
+    });
 });
 
 builder.Services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));

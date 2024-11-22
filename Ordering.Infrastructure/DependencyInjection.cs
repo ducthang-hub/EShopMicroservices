@@ -17,7 +17,7 @@ public static class DependencyInjection
             .EnableDynamicJson()
             .Build();
 
-        services.AddDbContextPool<OrderDbContext>((serviceProvider, option) =>
+        services.AddDbContext<OrderDbContext>((serviceProvider, option) =>
         {
             option.UseNpgsql(dataSource);
             option.AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>());
