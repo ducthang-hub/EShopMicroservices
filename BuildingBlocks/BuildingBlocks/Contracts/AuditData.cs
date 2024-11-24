@@ -8,6 +8,7 @@ public class AuditData
     public string?  ModifiedUser { get; set; }
     public DateTime? DeletedDate { get; set; }
     public string? DeletedUser { get; set; }
+    public bool IsDeleted { get; set; }
 
     public void PopulateAudit(string userId, bool isModified = false)
     {
@@ -21,5 +22,12 @@ public class AuditData
             CreateDate = DateTime.UtcNow;
             CreateUser = userId;
         }
+    }
+
+    public void SoftDelete(string deletedBy)
+    {
+        IsDeleted = true;
+        DeletedDate = DateTime.UtcNow;
+        DeletedUser = deletedBy;
     }
 }

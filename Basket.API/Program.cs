@@ -1,7 +1,9 @@
 using System;
+using System.Reflection;
 using Basket.API.Consumers;
 using Basket.API.Persistence.DatabaseContext;
 using Basket.API.Persistence.Repositories;
+using BuildingBlocks.MassTransit.Extensions;
 using Carter;
 using Discount.GRPC;
 using MassTransit;
@@ -26,23 +28,7 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountService"] ?? string.Empty);
 });
 
-builder.Services.AddMassTransit(x =>
-{
-    x.AddConsumer<CreateOrderEventConsumer>();
-    // x.SetKebabCaseEndpointNameFormatter();
-    x.UsingRabbitMq((ctx, cfg) =>
-    {
-        cfg.Host("localhost", 5672,"/", h => {
-            h.Username("guest"); 
-            h.Password("guest");
-        });
-        
-        cfg.ReceiveEndpoint("create-order", e =>
-        {
-            e.Consumer<CreateOrderEventConsumer>(ctx);
-        });
-    });
-});
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
 
 builder.Services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddStackExchangeRedisCache(cfg => cfg.Configuration = builder.Configuration.GetConnectionString("Redis"));

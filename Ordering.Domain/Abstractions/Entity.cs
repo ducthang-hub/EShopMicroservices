@@ -9,6 +9,7 @@ public abstract class Entity<T> : IEntity<T>
     public string? ModifiedBy { get; set; }
     public DateTime? DeletedDate { get; set; }
     public string? DeletedBy { get; set; }
+    public bool IsDeleted { get; set; }
 
     public void PopulateAudit(string userId, bool isModified = false)
     {
@@ -23,4 +24,12 @@ public abstract class Entity<T> : IEntity<T>
             CreatedDate = DateTime.UtcNow;
         }
     }
+
+    public void SoftDelete(string deletedBy)
+    {
+        IsDeleted = true;
+        DeletedDate = DateTime.UtcNow;
+        DeletedBy = deletedBy;
+    }
+    
 }

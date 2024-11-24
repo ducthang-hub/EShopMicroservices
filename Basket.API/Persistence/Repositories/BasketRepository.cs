@@ -60,4 +60,28 @@ public class BasketRepository
             return null;
         }
     }
+
+    public async Task<IEnumerable<ShoppingCartItem>> AddItemsToBasket(Guid id, IEnumerable<ShoppingCartItem> items, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var cart = await dbContext.ShoppingCarts.Where(i => i.Id == id).FirstOrDefaultAsync(cancellationToken);
+
+            if (cart is null)
+            {
+                return Array.Empty<ShoppingCartItem>();
+            }
+
+            cart.CartItems.ToList().AddRange(items);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return cart.CartItems;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{nameof(AddItemsToBasket)} Error: {ex.Message}");
+            return Array.Empty<ShoppingCartItem>();
+        }
+    }
 }

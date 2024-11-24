@@ -1,8 +1,8 @@
 ﻿using Catalog.API.Domains;
-using Catalog.API.Persistent.Configurations;
+using Catalog.API.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog.API.Persistent.DatabaseContext;
+namespace Catalog.API.Persistence.DatabaseContext;
 
 public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbContext(options)
 {

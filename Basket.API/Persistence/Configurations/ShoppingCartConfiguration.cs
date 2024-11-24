@@ -11,6 +11,8 @@ public class ShoppingCartConfiguration : IEntityTypeConfiguration<ShoppingCart>
         builder.ToTable(nameof(ShoppingCart));
 
         builder.HasKey(i => i.Id);
-        builder.Property(i => i.UserId).IsRequired();
+        
+        builder.Property(i => i.UserId)
+            .IsRequired();
     }
 }

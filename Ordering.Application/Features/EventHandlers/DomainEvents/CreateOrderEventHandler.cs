@@ -11,8 +11,7 @@ namespace Ordering.Application.Features.EventHandlers.DomainEvents;
 public class CreateOrderEventHandler : INotificationHandler<CreatedOrderEvent>
 {
     private readonly ILogger<CreateOrderEventHandler> _logger;
-    private readonly IPublishEndpoint _publishEndpoint;
-
+    private readonly IPublishEndpoint _publishEndpoint; 
     public CreateOrderEventHandler
     (
         ILogger<CreateOrderEventHandler> logger,

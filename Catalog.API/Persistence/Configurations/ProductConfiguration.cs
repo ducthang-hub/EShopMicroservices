@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Catalog.API.Persistent.Configurations;
+namespace Catalog.API.Persistence.Configurations;
 
 public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
@@ -11,10 +11,23 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.ToTable(nameof(Product));
 
         builder.HasKey(i => i.Id);
+        
         builder.Property(i => i.Name)
+            .HasMaxLength(250)
             .IsRequired();
+
+        builder.Property(i => i.Thumbnail)
+            .HasMaxLength(500)
+            .IsRequired();
+
+        builder.Property(i => i.Images)
+            .HasColumnType("jsonb")
+            .IsRequired(false);
+        
         builder.Property(i => i.Price)
             .IsRequired();
-        
+
+        builder.Property(i => i.PiecesAvailable)
+            .IsRequired();
     }
 }

@@ -1,41 +1,22 @@
 ﻿using System.Net;
-using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
-using BuildingBlocks.Services.Test;
-using Catalog.API.Persistent.DatabaseContext;
+using Catalog.API.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.API.Features.Queries.ProductQueries.GetAllProducts;
 
-public class GetAllProductsResponse : ErrorResponse
-{
-}
-
-public class GetAllProductsQuery : IQuery<GetAllProductsResponse>
-{
-}
-
-public class GetAllProductsHandler : IQueryHandler<GetAllProductsQuery, GetAllProductsResponse>
-{
-    private readonly CatalogDbContext _dbContext;
-    private readonly ITest _test;
-    
-    public GetAllProductsHandler
+public class GetAllProductsHandler
     (
-        CatalogDbContext dbContext,
-        ITest test
+        CatalogDbContext dbContext
     )
-    {
-        _dbContext = dbContext;
-        _test = test;
-    }
-    
+    : IQueryHandler<GetAllProductsQuery, GetAllProductsResponse>
+{
     public async Task<GetAllProductsResponse> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
     {
         var response = new GetAllProductsResponse();
         try
         {
-            var products = await _dbContext.Products.ToListAsync(cancellationToken);
+            var products = await dbContext.Products.ToListAsync(cancellationToken);
             response.Data = new
             {
                 Products = products

@@ -6,7 +6,7 @@ namespace Ordering.Infrastructure.Data.DatabaseContext;
 
 public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContext(options), IOrderDbContext
 {
-    private const string DefaultSchema = "order";
+    public const string DefaultSchema = "order";
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     
