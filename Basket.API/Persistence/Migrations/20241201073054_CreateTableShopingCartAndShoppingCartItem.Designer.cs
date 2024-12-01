@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Basket.API.Persistence.Migrations
 {
     [DbContext(typeof(BasketDbContext))]
-    [Migration("20241124144339_CreateShoppingCartItemTable")]
-    partial class CreateShoppingCartItemTable
+    [Migration("20241201073054_CreateTableShopingCartAndShoppingCartItem")]
+    partial class CreateTableShopingCartAndShoppingCartItem
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,27 +32,29 @@ namespace Basket.API.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CreateUser")
+                    b.Property<string>("DeletedBy")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeletedUser")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedUser")
-                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -69,27 +71,29 @@ namespace Basket.API.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreateDate")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("CreateUser")
+                    b.Property<string>("DeletedBy")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeletedUser")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedUser")
-                        .HasColumnType("text");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");

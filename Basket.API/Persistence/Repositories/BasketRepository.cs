@@ -1,7 +1,6 @@
 ﻿using Basket.API.Domains;
 using Basket.API.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 
 namespace Basket.API.Persistence.Repositories;
 
@@ -12,19 +11,22 @@ public class BasketRepository
     )
     : IBasketRepository
 {
-    private readonly DbSet<ShoppingCart> _dbSet = dbContext.ShoppingCarts;
+    private readonly DbSet<ShoppingCartItem> _shoppingCartItem = dbContext.ShoppingCartItems;
+    private readonly DbSet<ShoppingCart> _shoppingCart = dbContext.ShoppingCarts;
 
 
     public async Task<ShoppingCart?> GetBasketAsync(Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            var cart = await _dbSet.Where(i => i.Id == id).FirstOrDefaultAsync(cancellationToken);
+            var cart = await _shoppingCart.Where(i => i.Id == id)
+                .Include(i => i.CartItems)
+                .FirstOrDefaultAsync(cancellationToken);
             return cart;
         }
         catch (Exception ex)
         {
-            logger.LogError($"{nameof(GetBasketAsync)} Error: {ex.Message}");
+            logger.LogError($"Error: {ex.Message}");
             return null;
         }
     }
@@ -33,13 +35,13 @@ public class BasketRepository
     {
         try
         {
-            await _dbSet.AddAsync(cart, cancellationToken);
+            await _shoppingCart.AddAsync(cart, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
             return true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"{nameof(StoreBasketAsync)} Error: {ex.Message}");
+            logger.LogError(ex, $"Error: {ex.Message}");
             return false;
         }
     }
@@ -51,37 +53,44 @@ public class BasketRepository
             var cartToDelete = await GetBasketAsync(id, cancellationToken);
             if (cartToDelete is null) return null;
 
-            _dbSet.Remove(cartToDelete);
+            _shoppingCart.Remove(cartToDelete);
+            await dbContext.SaveChangesAsync(cancellationToken);
             return cartToDelete;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"{nameof(StoreBasketAsync)} Error: {ex.Message}");
+            logger.LogError(ex, $"Error: {ex.Message}");
             return null;
         }
     }
 
-    public async Task<IEnumerable<ShoppingCartItem>> AddItemsToBasket(Guid id, IEnumerable<ShoppingCartItem> items, CancellationToken cancellationToken)
+    public async Task<bool> UpdateBasketAsync(ShoppingCart cart, CancellationToken cancellationToken)
     {
         try
         {
-            var cart = await dbContext.ShoppingCarts.Where(i => i.Id == id).FirstOrDefaultAsync(cancellationToken);
-
-            if (cart is null)
-            {
-                return Array.Empty<ShoppingCartItem>();
-            }
-
-            cart.CartItems.ToList().AddRange(items);
-
+            _shoppingCart.Update(cart);
             await dbContext.SaveChangesAsync(cancellationToken);
-
-            return cart.CartItems;
+            return true;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, $"{nameof(AddItemsToBasket)} Error: {ex.Message}");
-            return Array.Empty<ShoppingCartItem>();
+            logger.LogError(ex, $"Error: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<bool> AddItemsToCart(ShoppingCartItem item, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _shoppingCartItem.AddAsync(item, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"Error: {ex.Message}");
+            return false;
         }
     }
 }

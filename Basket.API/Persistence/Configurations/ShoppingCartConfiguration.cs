@@ -14,5 +14,10 @@ public class ShoppingCartConfiguration : IEntityTypeConfiguration<ShoppingCart>
         
         builder.Property(i => i.UserId)
             .IsRequired();
+
+        builder.HasMany(i => i.CartItems)
+            .WithOne(i => i.ShoppingCart)
+            .HasForeignKey(i => i.ShoppingCartId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

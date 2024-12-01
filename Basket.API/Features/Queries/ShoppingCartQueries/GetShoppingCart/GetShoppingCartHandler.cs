@@ -33,6 +33,7 @@ public class GetShoppingCartHandler
         {
             var cart = await basketRepository.GetBasketAsync(request.Id, cancellationToken);
             var couponsData = discountProtoServiceClient.GetDiscounts(new Empty(), cancellationToken: cancellationToken);
+            // var couponsData = new CouponModel();
             if (cart is null || couponsData is null)
             {
                 response.Status = HttpStatusCode.NotFound;

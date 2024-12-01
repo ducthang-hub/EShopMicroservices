@@ -43,8 +43,6 @@ public class Order : Aggregate<Guid>
         newOrder.AddDomainEvent(new CreatedOrderEvent(newOrder));
         return newOrder;
     }
-    
-    
 }
 
 

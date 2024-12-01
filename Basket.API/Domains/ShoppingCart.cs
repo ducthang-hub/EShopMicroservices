@@ -1,11 +1,10 @@
-﻿using BuildingBlocks.Contracts;
+﻿using Basket.API.Domains.Abstractions;
+using BuildingBlocks.Contracts;
 
 namespace Basket.API.Domains;
 
-public class ShoppingCart : AuditData
+public class ShoppingCart : Aggregate<Guid>
 {
-    public Guid Id { get; set; }
+    public List<ShoppingCartItem> CartItems { get; set; } = new();  
     public string UserId { get; set; } = string.Empty;
-
-    public IEnumerable<ShoppingCartItem> CartItems { get; set; }
 }

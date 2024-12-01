@@ -2,19 +2,10 @@
 using Basket.API.Domains;
 using Basket.API.DTOs;
 using Basket.API.Persistence.Repositories;
-using BuildingBlocks.Contracts;
 using Mapster;
 using MediatR;
 
 namespace Basket.API.Features.Commands.ShoppingCartCommands.CreateShoppingCart;
-
-public class CreateShoppingCartResponse : ErrorResponse
-{
-}
-
-public class CreateShoppingCartCommand : IRequest<CreateShoppingCartResponse>
-{
-}
 
 public class CreateShoppingCartHandler
     (
@@ -37,7 +28,10 @@ public class CreateShoppingCartHandler
                 UserId = userId,
             };
             newCart.PopulateAudit(userId);
-            
+            newCart.CartItems.AddRange(new ShoppingCartItem[]
+            {
+                new(Guid.NewGuid(), 2, userId)
+            });
             await basketRepository.StoreBasketAsync(newCart, cancellationToken);
             var cartDto = newCart.Adapt<ShoppingCartDto>();
 
