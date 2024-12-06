@@ -14,7 +14,7 @@ public class MessageHandler(ILogger<MessageHandler> logger) : ICommandHandler<Me
             var factory = new ConnectionFactory
             {
                 HostName = "localhost",
-                Port = 5672,
+                Port = 5673,
                 Password = "guest",
                 UserName = "guest"
             };
