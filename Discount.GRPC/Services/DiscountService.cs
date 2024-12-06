@@ -45,11 +45,36 @@ public class DiscountService(DiscountDbContext dbContext, ILogger<DiscountServic
 
             response.Coupons.Add(coupons.Adapt<List<CouponModel>>());
         }
+        catch (RpcException rpcEx)
+        {
+            logger.LogError(rpcEx, $"{functionName} Error: {rpcEx.Message}");
+            throw;
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, $"{functionName} Error: {ex.Message}");
         }
 
         return response;
+    }
+    
+    public override async Task<CouponModel?> GetDiscount(GetDiscountRequest request, ServerCallContext context)
+    {
+        const string functionName = $"{nameof(DiscountService)} - {nameof(GetDiscount)} =>";
+        try
+        {
+            var coupon = await dbContext.Coupons.FirstOrDefaultAsync(i => i.Id.ToString() == request.Id);
+            return coupon.Adapt<CouponModel>();
+        }
+        catch (RpcException rpcEx)
+        {
+            logger.LogError(rpcEx, $"{functionName} Error: {rpcEx.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{functionName} Error: {ex.Message}");
+            return new CouponModel();
+        }
     }
 }

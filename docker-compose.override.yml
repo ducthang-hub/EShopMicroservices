@@ -19,7 +19,7 @@
     container_name: rabbitmq_eshop
     env_file: ./.env
     ports:
-      - 15672:15672
-      - 5672:5672
+      - 15673:15672
+      - 5673:5672
     volumes:
       - rabbitmq_eshop_volume:/var/lib/rabbitmq
