@@ -1,11 +1,16 @@
 ﻿using System.Reflection;
+using Basket.API.BackgroundServices;
 using Basket.API.Persistence.DatabaseContext;
 using Basket.API.Persistence.Repositories;
 using BuildingBlocks.MassTransit.Extensions;
+using BuildingBlocks.MessageQueue.ConnectionProvider;
+using BuildingBlocks.MessageQueue.Consumer;
+using BuildingBlocks.MessageQueue.Producer;
 using Carter;
 using Discount.GRPC;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
 using StackExchange.Redis;
 
 namespace Basket.API.Extensions;
@@ -71,4 +76,20 @@ public static class ServiceExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddBackgroundService(this IServiceCollection services)
+    {
+        services.AddSingleton<IMessageQueueConnectionProvider, MessageQueueConnectionProvider>();
+        services.AddSingleton<IConsumer, Consumer>();
+        services.AddScoped<IProducer, Producer>();
+        services.AddHostedService<MessageConsumerService>();
+        services.AddHostedService<AnotherMessageConsumerService>();
+        services.AddHostedService<EmitLogConsumerService>();
+        services.AddHostedService<ReceiveLogConsumerService>();
+        services.AddSingleton<ConsumerService<EmitLogConsumerService>, EmitLogConsumerService>();
+        services.AddSingleton<ConsumerService<ReceiveLogConsumerService>, ReceiveLogConsumerService>();
+        return services;
+    }
+    
+    
 }

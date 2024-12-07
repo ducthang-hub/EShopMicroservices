@@ -3,7 +3,7 @@ using BuildingBlocks.MessageQueue.Consumer;
 
 namespace Basket.API.BackgroundServices;
 
-public class MessageConsumerService(ILogger<MessageConsumerService> logger, IConsumer consumer) : BackgroundService
+public class AnotherMessageConsumerService(ILogger<AnotherMessageConsumerService> logger, IConsumer consumer) : BackgroundService
 {
     private const string QueueName = "HelloMotherFucker";
     
@@ -16,7 +16,7 @@ public class MessageConsumerService(ILogger<MessageConsumerService> logger, ICon
     {
         try
         {
-            await consumer.ConsumeMessages(QueueName, nameof(MessageConsumerService ), cancellationToken);
+            await consumer.ConsumeMessages(QueueName, nameof(AnotherMessageConsumerService), cancellationToken);
             cancellationToken.WaitHandle.WaitOne();
         }
         catch (Exception ex)

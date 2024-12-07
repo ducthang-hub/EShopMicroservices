@@ -11,7 +11,8 @@ builder.Services
     .ConfigGRPC(builder.Configuration)
     .ConfigMessageBroker(builder.Configuration)
     .ConfigDomainRepository()
-    .ConfigNewtonSoft();
+    .ConfigNewtonSoft()
+    .AddBackgroundService();
 
 builder.Services.AddServicesInvocation();
 
