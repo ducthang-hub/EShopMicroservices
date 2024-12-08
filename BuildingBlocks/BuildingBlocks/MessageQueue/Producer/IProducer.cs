@@ -1,6 +1,8 @@
-﻿namespace BuildingBlocks.MessageQueue.Producer;
+﻿using BuildingBlocks.MessageQueue.Requests;
+
+namespace BuildingBlocks.MessageQueue.Producer;
 
 public interface IProducer
 {
-    Task PublishMessage(string queue, string message, CancellationToken cancellationToken);
+    Task PublishMessage(PublishRequest request, CancellationToken cancellationToken);
 }

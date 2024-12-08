@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
 using Basket.API.BackgroundServices;
+using Basket.API.BackgroundServices.BroadCast;
+using Basket.API.BackgroundServices.Routing;
+using Basket.API.BackgroundServices.WorkQueues;
 using Basket.API.Persistence.DatabaseContext;
 using Basket.API.Persistence.Repositories;
 using BuildingBlocks.MassTransit.Extensions;
@@ -86,8 +89,14 @@ public static class ServiceExtensions
         services.AddHostedService<AnotherMessageConsumerService>();
         services.AddHostedService<EmitLogConsumerService>();
         services.AddHostedService<ReceiveLogConsumerService>();
+        services.AddHostedService<LogConsumerService>();
+        services.AddHostedService<LogErrorConsumerService>();
         services.AddSingleton<ConsumerService, EmitLogConsumerService>();
         services.AddSingleton<ConsumerService, ReceiveLogConsumerService>();
+        services.AddSingleton<ConsumerService, AnotherMessageConsumerService>();
+        services.AddSingleton<ConsumerService, MessageConsumerService>();
+        services.AddSingleton<ConsumerService, LogConsumerService>();
+        services.AddSingleton<ConsumerService, LogErrorConsumerService>();
         return services;
     }
     

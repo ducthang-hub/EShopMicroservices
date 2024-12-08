@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.MessageQueue.Producer;
+using BuildingBlocks.MessageQueue.Requests;
+using RabbitMQ.Client;
 
 namespace Basket.API.Features.Commands.MessageCommands.RabbitMQ;
 
@@ -11,10 +13,16 @@ public class MessageHandler(ILogger<MessageHandler> logger, IProducer producer) 
     {
         
         var response = new MessageResponse();
-        var message = request.Message;
+        var publishRequest = new PublishRequest
+        {
+            Exchange = QueueName,
+            ExchangeType = ExchangeType.Fanout,
+            Message = request.Message,
+            RoutingKey = string.Empty
+        };
         try
         {
-            await producer.PublishMessage(QueueName, message, cancellationToken);
+            await producer.PublishMessage(publishRequest, cancellationToken);
             response.Status = HttpStatusCode.OK;
         }
         catch (Exception ex)

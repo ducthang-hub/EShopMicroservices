@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using BuildingBlocks.Helpers;
 using BuildingBlocks.MessageQueue.ConnectionProvider;
+using BuildingBlocks.MessageQueue.Requests;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -9,18 +10,26 @@ namespace BuildingBlocks.MessageQueue.Consumer;
 
 public class Consumer(IMessageQueueConnectionProvider connectionProvider, ILogger<Consumer> logger) : IConsumer
 {
-    public async Task ConsumeMessages(string exchange, Func<string, Task> handleMessage, CancellationToken cancellationToken)
+    public async Task ConsumeMessages(ConsumeRequest request, Func<string, Task> handleMessage, CancellationToken cancellationToken)
     {
         try
         {
+            var exchange = request.Exchange;
+            var exchangeType = request.ExchangeType;
+            var routingKeys = request.RoutingKeys;
+            
             var connection = await connectionProvider.GetConnection();
             var channel = await connection.CreateChannelAsync(cancellationToken: cancellationToken);
 
-            await channel.ExchangeDeclareAsync(exchange: exchange, ExchangeType.Fanout, cancellationToken: cancellationToken);
+            await channel.ExchangeDeclareAsync(exchange: exchange, exchangeType, cancellationToken: cancellationToken);
 
             var declareQueueResult = await channel.QueueDeclareAsync(cancellationToken: cancellationToken);
             var queueName = declareQueueResult.QueueName;
-            await channel.QueueBindAsync(queue: queueName, exchange: exchange, routingKey: string.Empty, cancellationToken: cancellationToken);
+            foreach (var key in routingKeys)
+            {
+                var routingKey = key.ToLowerInvariant();
+                await channel.QueueBindAsync(queue: queueName, exchange: exchange, routingKey: routingKey, cancellationToken: cancellationToken);
+            }
             
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.ReceivedAsync += (model, ea) =>

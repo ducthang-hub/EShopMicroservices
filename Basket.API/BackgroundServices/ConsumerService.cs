@@ -1,22 +1,23 @@
 ﻿using BuildingBlocks.Helpers;
 using BuildingBlocks.MessageQueue.Consumer;
+using BuildingBlocks.MessageQueue.Requests;
 
 namespace Basket.API.BackgroundServices;
 
 public abstract class ConsumerService(IConsumer consumer, ILogger logger) : BackgroundService
 {
-    protected abstract string QueueName { get; set; }
+    protected abstract ConsumeRequest ConsumeRequest { get; set; }
 
     protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        return Task.Run(() => ConsumeMessages(cancellationToken), cancellationToken);
+        return Task.Run(() => ConsumeMessages(ConsumeRequest, cancellationToken), cancellationToken);
     }
 
-    private async Task ConsumeMessages(CancellationToken cancellationToken)
+    private async Task ConsumeMessages(ConsumeRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            await consumer.ConsumeMessages(QueueName, HandleMessage, cancellationToken);
+            await consumer.ConsumeMessages(request, HandleMessage, cancellationToken);
             cancellationToken.WaitHandle.WaitOne();
         }
         catch (Exception ex)

@@ -1,12 +1,16 @@
-﻿using BuildingBlocks.Helpers;
-using BuildingBlocks.MessageQueue.Consumer;
+﻿using BuildingBlocks.MessageQueue.Consumer;
+using BuildingBlocks.MessageQueue.Requests;
 
-namespace Basket.API.BackgroundServices;
+namespace Basket.API.BackgroundServices.WorkQueues;
 
 public class MessageConsumerService(ILogger<MessageConsumerService> logger, IConsumer consumer) : ConsumerService(consumer, logger)
 {
-    protected override string QueueName { get; set; } = "Hello";
-    
+    protected override ConsumeRequest ConsumeRequest { get; set; } = new()
+    {
+        Exchange = "Hello",
+        ExchangeType = RabbitMQ.Client.ExchangeType.Fanout,
+        RoutingKeys = Array.Empty<string>()
+    };
     protected override async Task HandleMessage(string message)
     {
         logger.LogInformation($" [x] Consumer by {nameof(MessageConsumerService)} Received {message}");
