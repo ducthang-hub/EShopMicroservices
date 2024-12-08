@@ -8,7 +8,7 @@ namespace BuildingBlocks.MessageQueue.Consumer;
 
 public class BasicConsumer(IMessageQueueConnectionProvider connectionProvider, ILogger<BasicConsumer> logger) : IConsumer
 {
-    public async Task ConsumeMessages(string queue, string consumedBy, CancellationToken cancellationToken)
+    public async Task ConsumeMessages(string queue, Func<string, Task> handleMessage, CancellationToken cancellationToken)
     {
         try
         {
@@ -25,7 +25,7 @@ public class BasicConsumer(IMessageQueueConnectionProvider connectionProvider, I
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                await HandleMessage(message, consumedBy, logger);
+                await handleMessage(message);
                 await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken);
             };
 
@@ -37,13 +37,5 @@ public class BasicConsumer(IMessageQueueConnectionProvider connectionProvider, I
         }
     }
 
-    private async Task HandleMessage(string message, string consumedBy, ILogger<BasicConsumer> logger)
-    {
-        logger.LogInformation($" [x] Consumer by {consumedBy} Received {message}");
-                
-        int dots = message.Split('.').Length - 1;
-        await Task.Delay(dots * 1000);
 
-        logger.LogInformation($" [x] Consumer by {consumedBy} Done");
-    }
 }

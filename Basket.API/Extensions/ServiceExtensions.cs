@@ -86,8 +86,8 @@ public static class ServiceExtensions
         services.AddHostedService<AnotherMessageConsumerService>();
         services.AddHostedService<EmitLogConsumerService>();
         services.AddHostedService<ReceiveLogConsumerService>();
-        services.AddSingleton<ConsumerService<EmitLogConsumerService>, EmitLogConsumerService>();
-        services.AddSingleton<ConsumerService<ReceiveLogConsumerService>, ReceiveLogConsumerService>();
+        services.AddSingleton<ConsumerService, EmitLogConsumerService>();
+        services.AddSingleton<ConsumerService, ReceiveLogConsumerService>();
         return services;
     }
     

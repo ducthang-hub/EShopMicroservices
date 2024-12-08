@@ -3,9 +3,9 @@ using BuildingBlocks.MessageQueue.Consumer;
 
 namespace Basket.API.BackgroundServices;
 
-public abstract class ConsumerService<T>(IConsumer consumer, ILogger<T> logger) : BackgroundService
+public abstract class ConsumerService(IConsumer consumer, ILogger logger) : BackgroundService
 {
-    protected virtual string QueueName { get; set; }
+    protected abstract string QueueName { get; set; }
 
     protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -16,7 +16,7 @@ public abstract class ConsumerService<T>(IConsumer consumer, ILogger<T> logger) 
     {
         try
         {
-            await consumer.ConsumeMessages(QueueName, typeof(T).ToString(), cancellationToken);
+            await consumer.ConsumeMessages(QueueName, HandleMessage, cancellationToken);
             cancellationToken.WaitHandle.WaitOne();
         }
         catch (Exception ex)
@@ -24,4 +24,6 @@ public abstract class ConsumerService<T>(IConsumer consumer, ILogger<T> logger) 
             ex.LogError(logger);
         }
     }
+
+    protected abstract Task HandleMessage(string message);
 }

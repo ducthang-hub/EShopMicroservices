@@ -3,25 +3,17 @@ using BuildingBlocks.MessageQueue.Consumer;
 
 namespace Basket.API.BackgroundServices;
 
-public class MessageConsumerService(ILogger<MessageConsumerService> logger, IConsumer consumer) : BackgroundService
+public class MessageConsumerService(ILogger<MessageConsumerService> logger, IConsumer consumer) : ConsumerService(consumer, logger)
 {
-    private const string QueueName = "HelloMotherFucker";
+    protected override string QueueName { get; set; } = "Hello";
     
-    protected override Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task HandleMessage(string message)
     {
-        return Task.Run(() => ConsumeMessages(cancellationToken), cancellationToken);
-    }
+        logger.LogInformation($" [x] Consumer by {nameof(MessageConsumerService)} Received {message}");
+                
+        int dots = message.Split('.').Length - 1;
+        await Task.Delay(dots * 1000);
 
-    private async Task ConsumeMessages(CancellationToken cancellationToken)
-    {
-        try
-        {
-            await consumer.ConsumeMessages(QueueName, nameof(MessageConsumerService ), cancellationToken);
-            cancellationToken.WaitHandle.WaitOne();
-        }
-        catch (Exception ex)
-        {
-            ex.LogError(logger);
-        }
+        logger.LogInformation($" [x] Consumer by {nameof(MessageConsumerService)} Done");
     }
 }
