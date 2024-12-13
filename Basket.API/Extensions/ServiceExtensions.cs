@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Basket.API.BackgroundServices;
 using Basket.API.BackgroundServices.BroadCast;
+using Basket.API.BackgroundServices.CouponRpcClient;
 using Basket.API.BackgroundServices.Routing;
 using Basket.API.BackgroundServices.WorkQueues;
 using Basket.API.Persistence.DatabaseContext;
@@ -85,6 +86,7 @@ public static class ServiceExtensions
         services.AddSingleton<IMessageQueueConnectionProvider, MessageQueueConnectionProvider>();
         services.AddSingleton<IConsumer, Consumer>();
         services.AddScoped<IProducer, Producer>();
+        services.AddScoped<ICouponRpcClient, CouponRpcClient>();
         services.AddHostedService<MessageConsumerService>();
         services.AddHostedService<AnotherMessageConsumerService>();
         services.AddHostedService<EmitLogConsumerService>();

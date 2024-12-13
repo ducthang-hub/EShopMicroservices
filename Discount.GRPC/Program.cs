@@ -1,3 +1,7 @@
+using BuildingBlocks.MessageQueue.ConnectionProvider;
+using BuildingBlocks.Protocols.Rpc.RpcServer;
+using Discount.GRPC;
+using Discount.GRPC.BackgroundServices;
 using Discount.GRPC.MappingConfig;
 using Discount.GRPC.Persistence.DatabaseContext;
 using Discount.GRPC.Services;
@@ -8,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddGrpc();
 builder.Services.AddDbContextPool<DiscountDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
+builder.Services.AddHostedService<CouponRpcServer>();
+builder.Services.AddSingleton<IMessageQueueConnectionProvider, MessageQueueConnectionProvider>();
+builder.Services.AddSingleton<IRpcServer, RpcServer<CouponModel>>();
 
 CouponMapping.RegisterMapping();
 var app = builder.Build();

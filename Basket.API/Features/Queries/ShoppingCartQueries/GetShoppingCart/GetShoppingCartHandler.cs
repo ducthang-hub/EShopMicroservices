@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Basket.API.BackgroundServices.CouponRpcClient;
 using Basket.API.Persistence.Repositories;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
@@ -20,7 +21,8 @@ public class GetShoppingCartHandler
     (
         ILogger<GetShoppingCartHandler> logger,
         DiscountProtoService.DiscountProtoServiceClient discountProtoServiceClient,
-        IBasketRepository basketRepository
+        IBasketRepository basketRepository,
+        ICouponRpcClient couponRpcClient
     ) 
     : IQueryHandler<GetShoppingCartQuery, GetShoppingCartResponse>
 {
@@ -33,6 +35,7 @@ public class GetShoppingCartHandler
         {
             var cart = await basketRepository.GetBasketAsync(request.Id, cancellationToken);
             var couponsData = discountProtoServiceClient.GetDiscounts(new Empty(), cancellationToken: cancellationToken);
+            var coupons = await couponRpcClient.GetCouponsAsync(cancellationToken);
             // var couponsData = new CouponModel();
             if (cart is null || couponsData is null)
             {
@@ -45,7 +48,7 @@ public class GetShoppingCartHandler
                 response.Data = new
                 {
                     Cart = cart,
-                    Coupons = couponsData.Coupons
+                    Coupons = coupons
                 };
             }
         }
