@@ -2,5 +2,5 @@
 
 public interface IRpcClient<T>
 {
-    public Task<T> ProcessUnaryAsync(CancellationToken cancellationToken);
+    public Task<T> ProcessUnaryAsync(string queueName, CancellationToken cancellationToken);
 }

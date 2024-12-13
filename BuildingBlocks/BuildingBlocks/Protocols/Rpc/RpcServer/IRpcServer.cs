@@ -1,7 +1,7 @@
 ﻿namespace BuildingBlocks.Protocols.Rpc.RpcServer;
 
-public interface IRpcServer
+public interface IRpcServer<T>
 {
-    public Task ConsumeMessages(object messageRequest, CancellationToken cancellationToken);
+    public Task ConsumeMessages(string queueName, Func<T> handler, CancellationToken cancellationToken);
 
 }

@@ -7,18 +7,18 @@ using RabbitMQ.Client.Events;
 
 namespace BuildingBlocks.Protocols.Rpc.RpcClient;
 
-public class RpcClient<T>(IMessageQueueConnectionProvider connectionProvider, ILogger logger, string queueName) : IRpcClient<T>
+public class RpcClient<T>(IMessageQueueConnectionProvider connectionProvider, ILogger<RpcClient<T>> logger) : IRpcClient<T>
 {
     private readonly TaskCompletionSource<T> _taskSource = new();
     private readonly Guid _correlationId = Guid.NewGuid();
     private string _replyQueue = string.Empty;
     
-    public async Task<T> ProcessUnaryAsync(CancellationToken cancellationToken)
+    public async Task<T> ProcessUnaryAsync(string queueName, CancellationToken cancellationToken)
     {
         try
         {
             await ConfigListeningReplyQueue(cancellationToken);
-            await SendRequest(cancellationToken);
+            await SendRequest(queueName, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -64,7 +64,7 @@ public class RpcClient<T>(IMessageQueueConnectionProvider connectionProvider, IL
         }
     }
     
-    private async Task SendRequest(CancellationToken cancellationToken)
+    private async Task SendRequest(string queueName, CancellationToken cancellationToken)
     {
         try
         {

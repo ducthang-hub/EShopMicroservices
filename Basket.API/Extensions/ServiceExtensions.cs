@@ -1,21 +1,19 @@
 ﻿using System.Reflection;
 using Basket.API.BackgroundServices;
 using Basket.API.BackgroundServices.BroadCast;
-using Basket.API.BackgroundServices.CouponRpcClient;
 using Basket.API.BackgroundServices.Routing;
 using Basket.API.BackgroundServices.WorkQueues;
+using Basket.API.Domains;
 using Basket.API.Persistence.DatabaseContext;
 using Basket.API.Persistence.Repositories;
 using BuildingBlocks.MassTransit.Extensions;
 using BuildingBlocks.MessageQueue.ConnectionProvider;
 using BuildingBlocks.MessageQueue.Consumer;
 using BuildingBlocks.MessageQueue.Producer;
+using BuildingBlocks.Protocols.Rpc.RpcClient;
 using Carter;
 using Discount.GRPC;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-using StackExchange.Redis;
 
 namespace Basket.API.Extensions;
 
@@ -86,7 +84,7 @@ public static class ServiceExtensions
         services.AddSingleton<IMessageQueueConnectionProvider, MessageQueueConnectionProvider>();
         services.AddSingleton<IConsumer, Consumer>();
         services.AddScoped<IProducer, Producer>();
-        services.AddScoped<ICouponRpcClient, CouponRpcClient>();
+        services.AddScoped<IRpcClient<IEnumerable<Coupon>>, RpcClient<IEnumerable<Coupon>>>();
         services.AddHostedService<MessageConsumerService>();
         services.AddHostedService<AnotherMessageConsumerService>();
         services.AddHostedService<EmitLogConsumerService>();

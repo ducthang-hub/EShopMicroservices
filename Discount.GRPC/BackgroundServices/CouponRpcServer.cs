@@ -1,24 +1,38 @@
 ﻿using BuildingBlocks.Helpers;
-using BuildingBlocks.MessageQueue.ConnectionProvider;
 using BuildingBlocks.Protocols.Rpc.RpcServer;
+using Discount.GRPC.Domains;
+using Discount.GRPC.Persistence.DatabaseContext;
 
 namespace Discount.GRPC.BackgroundServices;
 
 public class CouponRpcServer(
-    IMessageQueueConnectionProvider connectionProvider,
     ILogger<CouponRpcServer> logger,
-    IRpcServer rpcServer
+    IRpcServer<IEnumerable<Coupon>> rpcServer,
+    IServiceProvider serviceProvider
 ) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         try
         {
-            await rpcServer.ConsumeMessages(null, cancellationToken);
+            await rpcServer.ConsumeMessages("rpc_coupon", GetCoupons, cancellationToken);
         }
         catch (Exception ex)
         {
             ex.LogError(logger);
         }
+    }
+
+    private IEnumerable<Coupon> GetCoupons()
+    {
+        var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetService<DiscountDbContext>();
+        if (dbContext is null)
+        {
+            return default!;
+        }
+            
+        var coupons = dbContext.Coupons.AsEnumerable();
+        return coupons;
     }
 }

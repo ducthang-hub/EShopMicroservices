@@ -1,28 +1,16 @@
 ﻿using System.Net;
-using Basket.API.BackgroundServices.CouponRpcClient;
+using Basket.API.Domains;
 using Basket.API.Persistence.Repositories;
-using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
-using Discount.GRPC;
-using Google.Protobuf.WellKnownTypes;
+using BuildingBlocks.Protocols.Rpc.RpcClient;
 
 namespace Basket.API.Features.Queries.ShoppingCartQueries.GetShoppingCart;
-
-public class GetShoppingCartResponse : ErrorResponse
-{
-}
-
-public class GetShoppingCartQuery(Guid id) : IQuery<GetShoppingCartResponse>
-{
-    public Guid Id { get; set; } = id;
-}
 
 public class GetShoppingCartHandler
     (
         ILogger<GetShoppingCartHandler> logger,
-        DiscountProtoService.DiscountProtoServiceClient discountProtoServiceClient,
         IBasketRepository basketRepository,
-        ICouponRpcClient couponRpcClient
+        IRpcClient<IEnumerable<Coupon>> rpcClient
     ) 
     : IQueryHandler<GetShoppingCartQuery, GetShoppingCartResponse>
 {
@@ -34,10 +22,9 @@ public class GetShoppingCartHandler
         try
         {
             var cart = await basketRepository.GetBasketAsync(request.Id, cancellationToken);
-            var couponsData = discountProtoServiceClient.GetDiscounts(new Empty(), cancellationToken: cancellationToken);
-            var coupons = await couponRpcClient.GetCouponsAsync(cancellationToken);
-            // var couponsData = new CouponModel();
-            if (cart is null || couponsData is null)
+            var coupons = await rpcClient.ProcessUnaryAsync("rpc_coupon", cancellationToken);
+            
+            if (cart is null)
             {
                 response.Status = HttpStatusCode.NotFound;
                 response.Message = $"Cart with user {request.Id} not found";
