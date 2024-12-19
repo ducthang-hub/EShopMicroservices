@@ -6,7 +6,7 @@ using Ordering.Domain.Abstractions;
 
 namespace Ordering.Infrastructure.Interceptors;
 
-public class DispatchDomainEventInterceptor(IMediator mediator) : SaveChangesInterceptor
+public class DispatchDomainEventInterceptor(IPublisher publisher) : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -38,7 +38,7 @@ public class DispatchDomainEventInterceptor(IMediator mediator) : SaveChangesInt
 
         foreach (var domainEvent in domainEvents)
         {
-            await mediator.Publish(domainEvent);
+            await publisher.Publish(domainEvent);
         }
 
     }

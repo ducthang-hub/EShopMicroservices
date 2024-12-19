@@ -29,16 +29,17 @@ public class Order : Aggregate<Guid>
         return item;
     }
 
-    private Order(string userId, Address shippingAddress, Payment payment)
+    private Order(string userId, Address shippingAddress, Payment payment, OrderStatus status)
     {
         UserId = userId;
         ShippingAddress = shippingAddress;
         Payment = payment;
+        Status = status;
     }
 
-    public static Order Create(string userId, Address shippingAddress, Payment payment)
+    public static Order From(string userId, Address shippingAddress, Payment payment, OrderStatus status)
     {
-        var newOrder = new Order(userId, shippingAddress, payment);
+        var newOrder = new Order(userId, shippingAddress, payment, status);
         newOrder.PopulateAudit(userId);
         newOrder.AddDomainEvent(new CreatedOrderEvent(newOrder));
         return newOrder;

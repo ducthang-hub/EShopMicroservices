@@ -6,6 +6,6 @@ public static class ErrorHelper
 {
     public static void LogError(this Exception ex, ILogger logger)
     {
-        logger.LogError(ex, $"Error: {ex.Message}");
+        logger.LogError(ex, "Error: {}", ex.Message);
     }
 }

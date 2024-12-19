@@ -1,4 +1,6 @@
 ﻿using Basket.API.Domains.Events;
+using BuildingBlock.Messaging.IntegrationEvents;
+using MassTransit;
 
 namespace Basket.API.Domains.Abstractions;
 

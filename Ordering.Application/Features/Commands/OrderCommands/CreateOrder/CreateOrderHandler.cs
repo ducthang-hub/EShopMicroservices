@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using BuildingBlocks.CQRS;
 using Microsoft.Extensions.Logging;
+using Ordering.Domain.Enums;
 using Ordering.Domain.Models;
 using Ordering.Domain.ValueObject;
 using Ordering.Infrastructure.Data.DatabaseContext;
@@ -26,7 +27,7 @@ public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, CreateOrde
         var response = new CreateOrderResponse();
         try
         {
-            var newOrder = CreateOrder(request);
+            var newOrder = CreateOrder(request.Payload);
 
             await _orderDbContext.Orders.AddAsync(newOrder, cancellationToken);
             await _orderDbContext.SaveChangesAsync(cancellationToken);
@@ -43,7 +44,7 @@ public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, CreateOrde
         return response;
     }
 
-    private Order CreateOrder(CreateOrderCommand request)
+    private Order CreateOrder(CreateOrderPayload request)
     {
         var userId = request.UserId;
         var addressDto = request.ShippingAddress;
@@ -55,7 +56,7 @@ public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, CreateOrde
         var payment = Payment.Of(paymentDto.CardName, paymentDto.CardNumber, paymentDto.Expiration, paymentDto.Cvv,
             paymentDto.PaymentMethod);
         
-        var newOrder = Order.Create(userId, shippingAddress, payment);
+        var newOrder = Order.From(userId, shippingAddress, payment, OrderStatus.Pending);
         foreach (var item in orderItems)
         {
             newOrder.AddOrderItem(item.ProductId, item.Quantity, item.Price);
