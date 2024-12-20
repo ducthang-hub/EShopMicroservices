@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.IntegrationEvents;
+﻿using BuildingBlock.Messaging.IntegrationEvents;
 using BuildingBlocks.MassTransit.Contracts.Queues;
 using MassTransit;
 using MediatR;

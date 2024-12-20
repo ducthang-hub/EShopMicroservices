@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace BuildingBlocks.Extensions;
+namespace BuildingBlocks.Extensions.Extensions;
 
 public static class ServiceExtensions
 {

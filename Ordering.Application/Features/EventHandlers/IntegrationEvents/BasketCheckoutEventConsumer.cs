@@ -1,5 +1,6 @@
 ﻿using BuildingBlock.Messaging.IntegrationEvents;
 using BuildingBlocks.Helpers;
+using BuildingBlocks.MassTransit.Contracts.Queues;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -12,13 +13,13 @@ public class BasketCheckoutEventConsumer
 (
     ILogger<BasketCheckoutEventConsumer> logger,
     ISender sender
-) : IConsumer<ShoppingCartCheckoutEvent>
+) : IConsumer<ICheckoutShoppingCart>
 {
-    public async Task Consume(ConsumeContext<ShoppingCartCheckoutEvent> context)
+    public async Task Consume(ConsumeContext<ICheckoutShoppingCart> context)
     {
         try
         {
-            var @event = context.Message;
+            var @event = context.Message.Content;
 
             var address = new AddressDto(@event.FirstName, @event.LastName, @event.EmailAddress, @event.AddressLine,
                 @event.Country, @event.State, @event.ZipCode);

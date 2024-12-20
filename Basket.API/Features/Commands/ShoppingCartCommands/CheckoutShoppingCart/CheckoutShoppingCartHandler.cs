@@ -2,7 +2,9 @@
 using Basket.API.Persistence.Repositories;
 using BuildingBlock.Messaging.IntegrationEvents;
 using BuildingBlocks.CQRS;
+using BuildingBlocks.Extensions.Extensions;
 using BuildingBlocks.Helpers;
+using BuildingBlocks.MassTransit.Contracts.Queues;
 using Mapster;
 using MassTransit;
 
@@ -30,7 +32,7 @@ public class CheckoutShoppingCartHandler(
             }
 
             var @event = payload.Adapt<ShoppingCartCheckoutEvent>(); 
-            publishEndpoint.Publish(@event, cancellationToken);
+            publishEndpoint.Publish<ICheckoutShoppingCart>(new {Content = @event}, cancellationToken).FireAndForget();
         }
         catch (Exception ex)
         {

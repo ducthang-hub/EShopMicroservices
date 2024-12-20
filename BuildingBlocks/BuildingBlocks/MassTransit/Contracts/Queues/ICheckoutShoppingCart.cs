@@ -2,7 +2,7 @@
 
 namespace BuildingBlocks.MassTransit.Contracts.Queues;
 
-public interface ICreateOrder
+public interface ICheckoutShoppingCart
 {
-    public CreateOrderEvent Content { get; set; }
+    public ShoppingCartCheckoutEvent Content { get; set; }
 }

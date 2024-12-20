@@ -1,6 +1,7 @@
 using Basket.API.Extensions;
 using BuildingBlocks.Caching;
 using BuildingBlocks.Extensions;
+using BuildingBlocks.Extensions.Extensions;
 using Carter;
 
 var builder = WebApplication.CreateBuilder(args);
