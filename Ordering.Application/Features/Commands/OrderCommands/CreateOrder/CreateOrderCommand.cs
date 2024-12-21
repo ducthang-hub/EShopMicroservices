@@ -12,7 +12,11 @@ public class CreateOrderPayload
     public PaymentDto Payment { get; set; }
     public IEnumerable<OrderItemDto> OrderItems { get; set; }
 }
-public class CreateOrderResponse : ErrorResponse{}
+
+public class CreateOrderResponse : ErrorResponse
+{
+    public IEnumerable<Guid> ProductIds { get; set; }
+}
 
 public class CreateOrderCommand(CreateOrderPayload payload) : ICommand<CreateOrderResponse>
 {

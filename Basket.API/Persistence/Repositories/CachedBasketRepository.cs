@@ -63,6 +63,7 @@ public class CachedBasketRepository
         try
         {
             await redisCache.HashSetAsync(HashKey, cart.Id.ToString(), cart);
+            await repository.UpdateBasketAsync(cart, cancellationToken);
             return true;
         }
         catch (Exception ex)

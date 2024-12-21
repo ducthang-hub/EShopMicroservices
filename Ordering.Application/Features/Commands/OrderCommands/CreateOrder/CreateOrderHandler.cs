@@ -32,6 +32,7 @@ public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, CreateOrde
             await _orderDbContext.Orders.AddAsync(newOrder, cancellationToken);
             await _orderDbContext.SaveChangesAsync(cancellationToken);
 
+            response.ProductIds = newOrder.OrderItems.Select(i => i.ProductId).Distinct();
             response.Status = HttpStatusCode.Created;
             response.Data = newOrder;
         }

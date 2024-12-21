@@ -6,7 +6,7 @@ using Ordering.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddInfrastructureServices(builder.Configuration)
-    .AddApplicationServices(builder.Configuration, Assembly.GetExecutingAssembly());
+    .AddApplicationServices(builder.Configuration);
 builder.Services.AddCarter();
 
 var app = builder.Build();

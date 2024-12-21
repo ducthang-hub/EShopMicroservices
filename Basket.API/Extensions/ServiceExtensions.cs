@@ -85,12 +85,12 @@ public static class ServiceExtensions
         services.AddSingleton<IConsumer, Consumer>();
         services.AddScoped<IProducer, Producer>();
         services.AddScoped<IRpcClient<IEnumerable<Coupon>>, RpcClient<IEnumerable<Coupon>>>();
-        services.AddHostedService<MessageConsumerService>();
-        services.AddHostedService<AnotherMessageConsumerService>();
-        services.AddHostedService<EmitLogConsumerService>();
-        services.AddHostedService<ReceiveLogConsumerService>();
-        services.AddHostedService<LogConsumerService>();
-        services.AddHostedService<LogErrorConsumerService>();
+        // services.AddHostedService<MessageConsumerService>();
+        // services.AddHostedService<AnotherMessageConsumerService>();
+        // services.AddHostedService<EmitLogConsumerService>();
+        // services.AddHostedService<ReceiveLogConsumerService>();
+        // services.AddHostedService<LogConsumerService>();
+        // services.AddHostedService<LogErrorConsumerService>();
         services.AddSingleton<ConsumerService, EmitLogConsumerService>();
         services.AddSingleton<ConsumerService, ReceiveLogConsumerService>();
         services.AddSingleton<ConsumerService, AnotherMessageConsumerService>();

@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Features\EventHandlers\IntegrationEvents\" />
       <Folder Include="Features\Queries\" />
     </ItemGroup>
 

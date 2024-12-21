@@ -21,6 +21,13 @@ public class Order : Aggregate<Guid>
         orderItem.PopulateAudit(this.UserId);
         _orderItems.Add(orderItem);
     }
+    
+    
+    public void AddOrderItem(OrderItem orderItem)
+    {
+        orderItem.PopulateAudit(this.UserId);
+        _orderItems.Add(orderItem);
+    }
 
     public OrderItem? RemoveOrderItem(Guid itemId)
     {
@@ -41,7 +48,7 @@ public class Order : Aggregate<Guid>
     {
         var newOrder = new Order(userId, shippingAddress, payment, status);
         newOrder.PopulateAudit(userId);
-        newOrder.AddDomainEvent(new CreatedOrderEvent(newOrder));
+        // newOrder.AddDomainEvent(new CreatedOrderEvent(newOrder));
         return newOrder;
     }
 }

@@ -6,6 +6,8 @@ namespace Basket.API.Features.Commands.ShoppingCartCommands.CheckoutShoppingCart
 public class CheckoutShoppingCartPayload
 {
     public Guid CartId { get; set; }
+
+    public string UserId { get; set; }
     // Shipping and BillingAddress
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
