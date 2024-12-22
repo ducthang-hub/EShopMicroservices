@@ -12,6 +12,7 @@ using BuildingBlocks.MessageQueue.Consumer;
 using BuildingBlocks.MessageQueue.Producer;
 using BuildingBlocks.Protocols.Rpc.RpcClient;
 using Carter;
+using Catalog.GRPC;
 using Discount.GRPC;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,10 @@ public static class ServiceExtensions
         services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
         {
             options.Address = new Uri(configuration["GrpcSettings:DiscountService"] ?? string.Empty);
+        });
+        services.AddGrpcClient<ProductProtoService.ProductProtoServiceClient>(options =>
+        {
+            options.Address = new Uri(configuration["GrpcSettings:CatalogService"] ?? string.Empty);
         });
         return services;
     }

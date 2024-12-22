@@ -9,6 +9,6 @@ public class Product : AuditData
     public string Name { get; set; } = default!;
     public double Price { get; set; }
     public string Thumbnail { get; set; } = default!;
-    public IEnumerable<string> Images { get; set; }
+    public List<string> Images { get; set; } = [];
     public uint PiecesAvailable { get; set; }
 }

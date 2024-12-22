@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using BuildingBlock.Messaging.IntegrationEvents;
 using BuildingBlocks.Helpers;
+using BuildingBlocks.MassTransit.Contracts.QueueRequests;
 using BuildingBlocks.MassTransit.Contracts.QueueResponses;
 using BuildingBlocks.MassTransit.Contracts.Queues;
 using Mapster;

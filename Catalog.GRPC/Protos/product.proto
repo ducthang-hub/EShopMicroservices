@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "Catalog.GRPC";
+
+package product;
+
+service ProductProtoService{
+  rpc GetProductsStream (GetProductsRequest) returns (stream Product);
+  rpc GetProducts (GetProductsRequest) returns (GetProductsResponse);
+}
+
+message GetProductsRequest {
+  repeated string productIds = 1;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+}
+
+message Product {
+  string id = 1;
+  double price = 2;
+  uint32 piecesAvailable = 3;
+}

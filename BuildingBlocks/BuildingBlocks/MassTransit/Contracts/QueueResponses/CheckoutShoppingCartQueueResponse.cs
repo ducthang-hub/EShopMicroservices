@@ -2,5 +2,5 @@
 
 public class CheckoutShoppingCartQueueResponse
 {
-    public IEnumerable<Guid> InOrderProductIds { get; set; }
+    public IEnumerable<Guid> InOrderProductIds { get; set; } = [];
 }

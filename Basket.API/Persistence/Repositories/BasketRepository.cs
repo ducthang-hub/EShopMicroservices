@@ -68,6 +68,7 @@ public class BasketRepository
     {
         try
         {
+            //todo: handle update cart that get from redis but not directly from database
             _shoppingCart.Update(cart);
             await dbContext.SaveChangesAsync(cancellationToken);
             return true;

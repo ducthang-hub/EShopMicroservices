@@ -2,7 +2,7 @@
 
 public static class TaskExtensions
 {
-    public static void FireAndForget(this Task task, Action<Exception> errorHandler = null)
+    public static void FireAndForget(this Task task, Action<Exception>? errorHandler = null)
     {
         task.ContinueWith(t =>
         {

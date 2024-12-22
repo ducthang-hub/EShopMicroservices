@@ -5,8 +5,9 @@ using BuildingBlock.Messaging.IntegrationEvents;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.Extensions.Extensions;
 using BuildingBlocks.Helpers;
+using BuildingBlocks.MassTransit.Contracts.QueueRequests;
 using BuildingBlocks.MassTransit.Contracts.QueueResponses;
-using BuildingBlocks.MassTransit.Contracts.Queues;
+using Catalog.GRPC;
 using Mapster;
 using MassTransit;
 using MediatR;
@@ -17,6 +18,7 @@ public class CheckoutShoppingCartHandler(
         IBasketRepository basketRepository,
         ILogger<CheckoutShoppingCartHandler> logger,
         IRequestClient<CheckoutShoppingCartQueueRequest> requestClient,
+        ProductProtoService.ProductProtoServiceClient productProtoServiceClient,
         IPublisher publisher 
     ) 
     : ICommandHandler<CheckoutShoppingCartCommand, CheckoutShoppingCartResponse>
@@ -35,10 +37,22 @@ public class CheckoutShoppingCartHandler(
                 return response;
             }
 
+            var productIds = cart.CartItems.Select(i => i.ProductId.ToString());
+            var getProductRequest = new GetProductsRequest();
+            foreach (var id in productIds)
+            {
+                getProductRequest.ProductIds.Add(id);
+            }
+            var products = productProtoServiceClient.GetProducts(getProductRequest, cancellationToken: cancellationToken);
+            
             var @event = payload.Adapt<ShoppingCartCheckoutEvent>(); 
-            var cartItemDtos = cart.CartItems.Select(item => item.Adapt<CartItemDto>()).ToList();
-            @event.CartItems = cartItemDtos;
-            // await publishEndpoint.Publish<ICheckoutShoppingCart>(new {Content = @event}, cancellationToken);
+            @event.CartItems = cart.CartItems.Select(item =>
+            {
+                var product = products.Products.FirstOrDefault(i => i.Id == item.ProductId.ToString());
+                var cartItem = item.Adapt<CartItemDto>();
+                cartItem.Price = (double)product?.Price!;
+                return cartItem;
+            }).ToList();
             
             var checkoutCartResponse = await requestClient.GetResponse<CheckoutShoppingCartQueueResponse>(new CheckoutShoppingCartQueueRequest
             {
@@ -46,11 +60,11 @@ public class CheckoutShoppingCartHandler(
             }, cancellationToken);
             if (checkoutCartResponse.Message.InOrderProductIds.Any())
             {
-                await publisher.Publish(new CheckoutBasketSuccessfullyEvent
+                publisher.Publish(new CheckoutBasketSuccessfullyEvent
                 {
                     CartId = cart.Id,
                     CheckoutProductIds = checkoutCartResponse.Message.InOrderProductIds
-                }, cancellationToken);
+                }, cancellationToken).FireAndForget();
             }
             
             response.Status = HttpStatusCode.Accepted;

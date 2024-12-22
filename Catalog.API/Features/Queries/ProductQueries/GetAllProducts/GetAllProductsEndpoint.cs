@@ -7,10 +7,19 @@ public class GetAllProductsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/products", async (IMediator mediator) =>
+        app.MapGet("/products", async (IMediator mediator, ILogger<GetAllProductsEndpoint> logger) =>
         {
-            var query = new GetAllProductsQuery();
-            var response = await mediator.Send(query);
+            var response = new GetAllProductsResponse();
+            try
+            {
+                var query = new GetAllProductsQuery();
+                response = await mediator.Send(query);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error: {ex.Message}");
+                response.Message = ex.Message;
+            }
             return response;
         });
     }
