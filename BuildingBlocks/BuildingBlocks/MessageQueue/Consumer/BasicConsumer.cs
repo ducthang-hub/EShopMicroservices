@@ -9,7 +9,9 @@ namespace BuildingBlocks.MessageQueue.Consumer;
 
 public class BasicConsumer(IMessageQueueConnectionProvider connectionProvider, ILogger<BasicConsumer> logger) : IConsumer
 {
-    public async Task ConsumeMessages(ConsumeRequest request, Func<string, Task> handleMessage, CancellationToken cancellationToken)
+    public Consumer.HandleMessageFunc HandleMessage { get; set; }
+
+    public async Task ConsumeMessages(ConsumeRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -26,7 +28,7 @@ public class BasicConsumer(IMessageQueueConnectionProvider connectionProvider, I
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                await handleMessage(message);
+                await HandleMessage(message);
                 await channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false, cancellationToken);
             };
 

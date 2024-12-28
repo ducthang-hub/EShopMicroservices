@@ -5,5 +5,6 @@ namespace BuildingBlocks.MessageQueue.Consumer;
 
 public interface IConsumer
 {
-    Task ConsumeMessages(ConsumeRequest request, Func<string, Task> handleMessage, CancellationToken cancellationToken);
+    Consumer.HandleMessageFunc HandleMessage { get; set; }
+    Task ConsumeMessages(ConsumeRequest request, CancellationToken cancellationToken);
 }

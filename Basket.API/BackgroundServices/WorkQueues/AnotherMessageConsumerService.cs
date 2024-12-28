@@ -12,7 +12,6 @@ public class AnotherMessageConsumerService(ILogger<AnotherMessageConsumerService
         RoutingKeys = Array.Empty<string>()
     };
 
-
     protected override async Task HandleMessage(string message)
     {
         logger.LogInformation($" [x] Consumer by {nameof(AnotherMessageConsumerService)} Received {message}");

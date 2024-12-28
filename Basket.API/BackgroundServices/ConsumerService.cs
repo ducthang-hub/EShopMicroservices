@@ -7,6 +7,7 @@ namespace Basket.API.BackgroundServices;
 public abstract class ConsumerService(IConsumer consumer, ILogger logger) : BackgroundService
 {
     protected abstract ConsumeRequest ConsumeRequest { get; set; }
+    protected abstract Task HandleMessage(string message);
 
     protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -17,8 +18,8 @@ public abstract class ConsumerService(IConsumer consumer, ILogger logger) : Back
     {
         try
         {
-            await consumer.ConsumeMessages(request, HandleMessage, cancellationToken);
-            cancellationToken.WaitHandle.WaitOne();
+            consumer.HandleMessage += HandleMessage;
+            await consumer.ConsumeMessages(request, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -26,5 +27,4 @@ public abstract class ConsumerService(IConsumer consumer, ILogger logger) : Back
         }
     }
 
-    protected abstract Task HandleMessage(string message);
 }

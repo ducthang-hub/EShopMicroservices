@@ -10,7 +10,11 @@ namespace BuildingBlocks.MessageQueue.Consumer;
 
 public class Consumer(IMessageQueueConnectionProvider connectionProvider, ILogger<Consumer> logger) : IConsumer
 {
-    public async Task ConsumeMessages(ConsumeRequest request, Func<string, Task> handleMessage, CancellationToken cancellationToken)
+    public delegate Task HandleMessageFunc(string message);
+
+    public HandleMessageFunc HandleMessage { get; set; }
+
+    public async Task ConsumeMessages(ConsumeRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -36,7 +40,7 @@ public class Consumer(IMessageQueueConnectionProvider connectionProvider, ILogge
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
-                handleMessage(message);
+                HandleMessage(message);
                 return Task.CompletedTask;
             };
 
