@@ -94,14 +94,14 @@ public static class ServiceExtensions
         // services.AddHostedService<AnotherMessageConsumerService>();
         // services.AddHostedService<EmitLogConsumerService>();
         // services.AddHostedService<ReceiveLogConsumerService>();
-        services.AddHostedService<LogConsumerService>();
-        services.AddHostedService<LogErrorConsumerService>();
-        services.AddSingleton<ConsumerService, EmitLogConsumerService>();
-        services.AddSingleton<ConsumerService, ReceiveLogConsumerService>();
-        services.AddSingleton<ConsumerService, AnotherMessageConsumerService>();
-        services.AddSingleton<ConsumerService, MessageConsumerService>();
-        services.AddSingleton<ConsumerService, LogConsumerService>();
-        services.AddSingleton<ConsumerService, LogErrorConsumerService>();
+        // services.AddHostedService<LogConsumerService>();
+        // services.AddHostedService<LogErrorConsumerService>();
+        // services.AddSingleton<ConsumerService, EmitLogConsumerService>();
+        // services.AddSingleton<ConsumerService, ReceiveLogConsumerService>();
+        // services.AddSingleton<ConsumerService, AnotherMessageConsumerService>();
+        // services.AddSingleton<ConsumerService, MessageConsumerService>();
+        // services.AddSingleton<ConsumerService, LogConsumerService>();
+        // services.AddSingleton<ConsumerService, LogErrorConsumerService>();
         return services;
     }
     
