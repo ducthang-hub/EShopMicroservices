@@ -1,10 +1,12 @@
-﻿using Authentication.Server.Domains;
+﻿using System.Threading.Tasks;
+using Authentication.Server.Domains;
 using Authentication.Server.Feature.Commands.GenerateAccessToken;
 using BuildingBlocks.Helpers;
 using MediatR;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
 

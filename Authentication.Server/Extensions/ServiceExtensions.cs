@@ -2,6 +2,8 @@
 using Authentication.Server.Persistence.DatabaseContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Authentication.Server.Extensions;
 
@@ -60,7 +62,26 @@ public static class ServiceExtensions
 
                 // Register the ASP.NET Core host.
                 options.UseAspNetCore();
-            });;
+            });
+        
+        services.AddAuthentication();
+        services.AddAuthorization();
+
+        return services;
+    }
+    
+    public static IServiceCollection ConfigureCors(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("_allowSpecificOrigins",
+                builder => builder
+                    .WithOrigins("*")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+            );
+        });
 
         return services;
     }
