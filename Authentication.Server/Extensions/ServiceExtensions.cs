@@ -46,6 +46,9 @@ public static class ServiceExtensions
                 // options.AllowClientCredentialsFlow();
                 options.AllowPasswordFlow();
                 
+                // Accept anonymous clients (i.e clients that don't send a client_id).
+                options.AcceptAnonymousClients();
+                
                 // Register the signing and encryption credentials.
                 options.AddDevelopmentEncryptionCertificate()
                     .AddDevelopmentSigningCertificate();
@@ -66,22 +69,6 @@ public static class ServiceExtensions
         
         services.AddAuthentication();
         services.AddAuthorization();
-
-        return services;
-    }
-    
-    public static IServiceCollection ConfigureCors(this IServiceCollection services)
-    {
-        services.AddCors(options =>
-        {
-            options.AddPolicy("_allowSpecificOrigins",
-                builder => builder
-                    .WithOrigins("*")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-            );
-        });
 
         return services;
     }

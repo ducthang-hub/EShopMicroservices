@@ -27,7 +27,7 @@ public static class ServiceExtensions
                 // Add a client registration without a client identifier/secret attached.
                 options.AddRegistration(new OpenIddictClientRegistration
                 {
-                    Issuer = new Uri("https://localhost:5057/", UriKind.Absolute)
+                    Issuer = new Uri("https://localhost:5056/", UriKind.Absolute)
                 });
             });
 

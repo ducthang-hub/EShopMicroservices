@@ -20,18 +20,24 @@ public class LoginHandler
         try
         {
             // using var client = serviceProvider.GetService<HttpClient>();
-            // var registerResponse = await client.PostAsJsonAsync("https://localhost:5056/Account/Register", new { payload.UserName, payload.Password });
+            // var registerResponse = await client.PostAsJsonAsync("https://localhost:5056/authen/register", new
+            // {
+            //     payload.UserName,
+            //     payload.Password,
+            //     payload.FirstName,
+            //     payload.LastName
+            // });
             //
             // // Ignore 409 responses, as they indicate that the account already exists.
-            // if (registerResponse.StatusCode == HttpStatusCode.Conflict)
+            // if (registerResponse.StatusCode == HttpStatusCode.OK)
             // {
+            //     response.Status = HttpStatusCode.OK;
+            //     response.Data = registerResponse;
             //     return response;
             // }
-            //
-            // response.Status = HttpStatusCode.OK;
-            // response.Data = registerResponse;
+            
             var service = serviceProvider.GetRequiredService<OpenIddictClientService>();
-
+            
             var result = await service.AuthenticateWithPasswordAsync(new()
             {
                 Username = payload.UserName,
