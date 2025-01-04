@@ -21,6 +21,7 @@ public class GetAllProductsEndpoint : ICarterModule
                 response.Message = ex.Message;
             }
             return response;
-        });
+        })
+        .RequireAuthorization("student");;
     }
 }

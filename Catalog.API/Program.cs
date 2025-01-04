@@ -1,6 +1,7 @@
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.PipelineBehaviors;
 using Carter;
+using Catalog.API.Extensions;
 using Catalog.API.Persistence.DatabaseContext;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +24,13 @@ builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
+builder.Services.AddEndpointAuthorization();
+
 var app = builder.Build();
 
 app.UseExceptionHandler(_ => { });
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapCarter();
 app.Run();

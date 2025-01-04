@@ -5,10 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .ConfigDatabase(builder.Configuration)
-    .ConfigOpenIddict()
-    .AddControllersWithViews();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    .ConfigAuthentication()
+    .ConfigIdentityServer();
+
 builder.Services.AddCarter();
 builder.Services.AddMediatR(cfg =>
 {
@@ -19,7 +18,7 @@ var app = builder.Build();
 
 app.UseRouting();
 app.UseHttpsRedirection();
-
+app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapCarter();

@@ -3,6 +3,7 @@ using System;
 using Authentication.Server.Persistence.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Authentication.Server.Persistence.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    partial class AuthDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250104083942_AddTablesOfResourceApi")]
+    partial class AddTablesOfResourceApi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,20 +41,6 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApiResource", "authen");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("97b1dc06-ebd0-455a-8a27-71bd04b7fbd9"),
-                            Name = "student-api-resource",
-                            Secret = new Guid("eb19ede6-a6b9-4775-96f9-a8e4fbeaf85c")
-                        },
-                        new
-                        {
-                            Id = new Guid("e895aaeb-d696-4d8a-978c-3718dfbd5843"),
-                            Name = "teacher-api-resource",
-                            Secret = new Guid("c30fd222-0e8e-47ff-93cd-7719db5ab2e3")
-                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ApiScope", b =>
@@ -71,20 +60,6 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApiScope", "authen");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d14f2be1-1abf-4c79-9fe0-19980ac6cd29"),
-                            DisplayName = "Student Api Scope",
-                            Name = "student-scope"
-                        },
-                        new
-                        {
-                            Id = new Guid("538a056c-ae30-4ea4-8cc9-6adff622dded"),
-                            DisplayName = "Teacher Api Scope",
-                            Name = "teacher-scope"
-                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ApiScopeResource", b =>
@@ -115,18 +90,6 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Client", "authen");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("4cb4b753-a1ac-476d-83d1-3b001899866d"),
-                            ClientId = "ewb-student-web"
-                        },
-                        new
-                        {
-                            Id = new Guid("eb2578fb-db26-4de4-b876-37244f97a6ca"),
-                            ClientId = "ewb-teacher"
-                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ClientGrantType", b =>
@@ -225,9 +188,6 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("Provider")
-                        .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

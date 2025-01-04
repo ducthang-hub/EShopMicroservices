@@ -1,9 +1,13 @@
-﻿using Authentication.Server.Domains;
+﻿using System.Text;
+using Authentication.Server.Domains;
 using Authentication.Server.Persistence.DatabaseContext;
+using Authentication.Server.ResourcesValidation;
+using IdentityServer4.Services;
+using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Authentication.Server.Extensions;
 
@@ -14,7 +18,6 @@ public static class ServiceExtensions
         services.AddDbContextPool<AuthDbContext>(opt =>
         {
             opt.UseNpgsql(configuration.GetConnectionString("DatabaseConnection"));
-            opt.UseOpenIddict();
         });
         
         services.AddIdentity<User, IdentityRole>()
@@ -24,52 +27,55 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigOpenIddict(this IServiceCollection services)
+    public static IServiceCollection ConfigAuthentication(this IServiceCollection services)
     {
-        services.AddOpenIddict()
-
-            // Register the OpenIddict core components.
-            .AddCore(options =>
-            {
-                // Configure OpenIddict to use the Entity Framework Core stores and models.
-                // Note: call ReplaceDefaultEntities() to replace the default entities.
-                options.UseEntityFrameworkCore()
-                    .UseDbContext<AuthDbContext>();
-            })
-            // Register the OpenIddict server components.
-            .AddServer(options =>
-            {
-                // Enable the token endpoint.
-                options.SetTokenEndpointUris("connect/token");
-
-                // Enable the client credentials flow.
-                // options.AllowClientCredentialsFlow();
-                options.AllowPasswordFlow();
-                
-                // Accept anonymous clients (i.e clients that don't send a client_id).
-                options.AcceptAnonymousClients();
-                
-                // Register the signing and encryption credentials.
-                options.AddDevelopmentEncryptionCertificate()
-                    .AddDevelopmentSigningCertificate();
-
-                // Register the ASP.NET Core host and configure the ASP.NET Core options.
-                options.UseAspNetCore()
-                    .EnableTokenEndpointPassthrough();
-            })
-            // Register the OpenIddict validation components.
-            .AddValidation(options =>
-            {
-                // Import the configuration from the local OpenIddict server instance.
-                options.UseLocalServer();
-
-                // Register the ASP.NET Core host.
-                options.UseAspNetCore();
-            });
+        const string authSecret = "auth-signing-key";
+        var key = Encoding.ASCII.GetBytes(authSecret);
         
-        services.AddAuthentication();
+        services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
+            {
+                option.Authority = "https://localhost:5056";
+                option.RequireHttpsMetadata = false;
+                option.SaveToken = true;
+                option.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
         services.AddAuthorization();
 
+        return services;
+    }
+
+    public static IServiceCollection ConfigIdentityServer(this IServiceCollection services)
+    {
+        services.AddIdentityServer(opts =>
+        {
+            opts.Events.RaiseErrorEvents = true;
+            opts.Events.RaiseInformationEvents = true;
+            opts.Events.RaiseFailureEvents = true;
+            opts.Events.RaiseSuccessEvents = true;
+            opts.EmitStaticAudienceClaim = true;
+        })
+        .AddClientStore<ClientStore>()
+        .AddResourceStore<ResourceStore>()
+        .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
+        .AddProfileService<ProfileService>()
+        .AddDeveloperSigningCredential();
+
+        services.AddTransient<IProfileService, ProfileService>();
+        services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
+        
         return services;
     }
 }
