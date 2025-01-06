@@ -27,31 +27,38 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigAuthentication(this IServiceCollection services)
+    public static IServiceCollection ConfigAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        const string authSecret = "auth-signing-key";
-        var key = Encoding.ASCII.GetBytes(authSecret);
+        var authSecret = configuration["IdentitySettings:SigningKey"];
+        var authority = configuration["Application:UrlHttps"];
+
+        if (authSecret != null)
+        {
+            var key = Encoding.ASCII.GetBytes(authSecret);
         
-        services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
-            {
-                option.Authority = "https://localhost:5056";
-                option.RequireHttpsMetadata = false;
-                option.SaveToken = true;
-                option.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(x =>
                 {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateIssuerSigningKey = true,
-                    RequireExpirationTime = true,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
-                };
-            });
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
+                {
+                    option.Authority = authority;
+                    // option.Authority = "https://localhost:5057";
+                    option.RequireHttpsMetadata = false;
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidIssuer = authority,
+                        ValidateIssuer = true,
+                        ValidateIssuerSigningKey = true,
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
+        }
+
         services.AddAuthorization();
 
         return services;

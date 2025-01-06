@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .ConfigDatabase(builder.Configuration)
-    .ConfigAuthentication()
+    .ConfigAuthentication(builder.Configuration)
     .ConfigIdentityServer();
 
 builder.Services.AddCarter();

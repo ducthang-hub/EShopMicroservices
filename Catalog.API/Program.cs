@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddCarter();
 
 builder.Services.AddMediatR(cfg =>
@@ -24,7 +22,7 @@ builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
-builder.Services.AddEndpointAuthorization();
+builder.Services.AddEndpointAuthorization(builder.Configuration);
 
 var app = builder.Build();
 
