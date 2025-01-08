@@ -1,18 +1,15 @@
 using Authentication.Server.Extensions;
+using BuildingBlocks.CQRS.Extensions;
 using Carter;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .ConfigDatabase(builder.Configuration)
-    .ConfigAuthentication(builder.Configuration)
-    .ConfigIdentityServer();
-
-builder.Services.AddCarter();
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
+    .ConfigAuthentication()
+    .ConfigIdentityServer()
+    .AddMediatR(typeof(Program).Assembly)
+    .AddCarter();
 
 var app = builder.Build();
 

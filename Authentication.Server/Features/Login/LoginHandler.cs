@@ -43,8 +43,7 @@ public class LoginHandler
             {
                 Address = $"{origin}/connect/token",
                 ClientId = payload.ClientId,
-                // Scope = "offline_access " + payload.ApiScope,
-                Scope = payload.ApiScope,
+                Scope = "offline_access " + payload.ApiScope,
                 ClientSecret = payload.ClientSecret,
                 UserName = payload.UserName,
                 Password = payload.Password,

@@ -1,4 +1,6 @@
 using System.Reflection;
+using BuildingBlocks.CQRS.Extensions;
+using BuildingBlocks.MassTransit.Extensions;
 using Carter;
 using Ordering.Application;
 using Ordering.Infrastructure;
@@ -6,8 +8,9 @@ using Ordering.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddInfrastructureServices(builder.Configuration)
-    .AddApplicationServices(builder.Configuration);
-builder.Services.AddCarter();
+    .AddMediatR(Assembly.GetExecutingAssembly())
+    .AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly())
+    .AddCarter();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

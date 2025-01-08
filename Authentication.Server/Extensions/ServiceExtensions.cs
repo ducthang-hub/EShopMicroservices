@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Authentication.Server.Domains;
+﻿using Authentication.Server.Domains;
 using Authentication.Server.Persistence.DatabaseContext;
 using Authentication.Server.ResourcesValidation;
 using IdentityServer4.Services;
@@ -7,7 +6,6 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Authentication.Server.Extensions;
 
@@ -27,37 +25,14 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigAuthentication(this IServiceCollection services)
     {
-        var authSecret = configuration["IdentitySettings:SigningKey"];
-        var authority = configuration["Application:UrlHttps"];
-
-        if (authSecret != null)
-        {
-            var key = Encoding.ASCII.GetBytes(authSecret);
-        
-            services.AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
-                {
-                    option.Authority = authority;
-                    // option.Authority = "https://localhost:5057";
-                    option.RequireHttpsMetadata = false;
-                    option.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false,
-                        ValidIssuer = authority,
-                        ValidateIssuer = true,
-                        ValidateIssuerSigningKey = true,
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
-                    };
-                });
-        }
+        services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer();
 
         services.AddAuthorization();
 
@@ -85,4 +60,5 @@ public static class ServiceExtensions
         
         return services;
     }
+    
 }

@@ -1,12 +1,13 @@
 using Basket.API.Extensions;
 using BuildingBlocks.Caching;
+using BuildingBlocks.CQRS.Extensions;
 using BuildingBlocks.Extensions;
 using BuildingBlocks.Extensions.Extensions;
 using Carter;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services
-    .ConfigMediatR()
+    .AddMediatR(typeof(Program).Assembly)
     .AddCustomRedisCache(builder.Configuration)
     .ConfigDatabase(builder.Configuration)
     .ConfigGRPC(builder.Configuration)

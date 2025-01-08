@@ -22,17 +22,15 @@ public static class EndpointAuthorization
                 })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
                 {
+                    option.Authority = authority;
                     option.RequireHttpsMetadata = false;
                     option.SaveToken = true;
                     option.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
-                        ValidateIssuer = true,
-                        ValidIssuer = authority,
                         ValidateIssuerSigningKey = true,
                         RequireExpirationTime = true,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
                     };
                 });
         }

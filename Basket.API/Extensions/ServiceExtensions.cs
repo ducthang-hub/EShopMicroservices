@@ -31,15 +31,6 @@ public static class ServiceExtensions
     //     return services;
     // }
 
-    public static IServiceCollection ConfigMediatR(this IServiceCollection services)
-    {
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-        });
-        return services;
-    }
-
     public static IServiceCollection ConfigDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContextPool<BasketDbContext>(opt => opt.UseNpgsql(configuration.GetConnectionString("DatabaseConnection")));
