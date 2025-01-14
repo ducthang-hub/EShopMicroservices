@@ -23,6 +23,18 @@ namespace Authentication.Server.Persistence.Configurations
                 .HasForeignKey(i => i.ApiResourceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasData(
+                new ApiScopeResource
+                {
+                    ApiResourceId = Guid.Parse("5b9aaeb4-d86c-4b2b-91ff-6df237697b77"),
+                    ApiScopeId = Guid.Parse("75f824ab-b599-4519-8bcc-37bea9ad7cd9"),
+                },
+                new ApiScopeResource
+                {
+                    ApiResourceId = Guid.Parse("5ed18100-4476-4fd4-ac74-4218e939e3fe"),
+                    ApiScopeId = Guid.Parse("7b3b5167-24a4-41e0-8648-48f7f02dd44b"),
+                }
+            );
         }
     }
 }

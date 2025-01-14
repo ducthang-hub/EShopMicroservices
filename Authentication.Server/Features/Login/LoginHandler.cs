@@ -1,18 +1,20 @@
 using System.Net;
+using Authentication.Server.Domains;
 using Authentication.Server.Persistence.DatabaseContext;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.Helpers;
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Authentication.Server.Features.Login;
 
 public class LoginHandler
     (
-        AuthDbContext dbContext,
         HttpClient httpClient,
         IConfiguration configuration,
-        ILogger<LoginHandler> logger
+        ILogger<LoginHandler> logger,
+        IHttpContextAccessor httpContextAccessor
     )
     : ICommandHandler<LoginCommand, LoginResponse>
 {
@@ -25,17 +27,8 @@ public class LoginHandler
         
         try
         {
-            var user = await dbContext.User
-                .Where(i => i.UserName == payload.UserName && i.PasswordHash == payload.Password)
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (user is null)
-            {
-                response.Status = HttpStatusCode.NotFound;
-                return response;
-            }
-
-            var origin = configuration["Application:UrlHttps"];
+            var requestScheme = payload.Scheme;
+            var origin = configuration[$"Application:{requestScheme}"];
             
             Console.WriteLine($"{funcName} client origin {origin}");
             

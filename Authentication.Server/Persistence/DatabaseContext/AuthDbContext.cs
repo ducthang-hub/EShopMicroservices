@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Authentication.Server.Persistence.DatabaseContext;
 
-public class AuthDbContext(DbContextOptions options) : IdentityDbContext<User>(options), IAuthDbContext
+public class AuthDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
     public static string DefaultSchema { get; set; } = "authen";
     

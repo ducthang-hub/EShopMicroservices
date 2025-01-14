@@ -21,6 +21,7 @@ public static class ServiceExtensions
         services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
+
         
         return services;
     }

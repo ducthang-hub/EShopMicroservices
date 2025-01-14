@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Authentication.Server.Persistence.Migrations
 {
     [DbContext(typeof(AuthDbContext))]
-    [Migration("20241229124816_InitAuthDatabase")]
-    partial class InitAuthDatabase
+    [Migration("20250112072051_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,10 +21,132 @@ namespace Authentication.Server.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("authen")
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Authentication.Server.Domains.ApiResource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("Secret")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApiResource", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ApiScope", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApiScope", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ApiScopeResource", b =>
+                {
+                    b.Property<Guid>("ApiScopeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApiResourceId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ApiScopeId", "ApiResourceId");
+
+                    b.HasIndex("ApiResourceId");
+
+                    b.ToTable("ApiScopeResource", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.Client", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Client", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientGrantType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("GrantType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientGrantType", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientScope", b =>
+                {
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApiScopeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ClientId", "ApiScopeId");
+
+                    b.HasIndex("ApiScopeId");
+
+                    b.ToTable("ClientScope", "authen");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientSecret", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Secret")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientSecret", "authen");
+                });
 
             modelBuilder.Entity("Authentication.Server.Domains.User", b =>
                 {
@@ -67,6 +189,9 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<int>("Provider")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -222,6 +347,66 @@ namespace Authentication.Server.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", "authen");
                 });
 
+            modelBuilder.Entity("Authentication.Server.Domains.ApiScopeResource", b =>
+                {
+                    b.HasOne("Authentication.Server.Domains.ApiResource", "ApiResource")
+                        .WithMany("ApiScopeResources")
+                        .HasForeignKey("ApiResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Authentication.Server.Domains.ApiScope", "ApiScope")
+                        .WithMany("ApiScopeResources")
+                        .HasForeignKey("ApiScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApiResource");
+
+                    b.Navigation("ApiScope");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientGrantType", b =>
+                {
+                    b.HasOne("Authentication.Server.Domains.Client", "Client")
+                        .WithMany("ClientGrantTypes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientScope", b =>
+                {
+                    b.HasOne("Authentication.Server.Domains.ApiScope", "ApiScope")
+                        .WithMany("ClientScopes")
+                        .HasForeignKey("ApiScopeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Authentication.Server.Domains.Client", "Client")
+                        .WithMany("ClientScopes")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApiScope");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ClientSecret", b =>
+                {
+                    b.HasOne("Authentication.Server.Domains.Client", "Client")
+                        .WithMany("ClientSecrets")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -271,6 +456,27 @@ namespace Authentication.Server.Persistence.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ApiResource", b =>
+                {
+                    b.Navigation("ApiScopeResources");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.ApiScope", b =>
+                {
+                    b.Navigation("ApiScopeResources");
+
+                    b.Navigation("ClientScopes");
+                });
+
+            modelBuilder.Entity("Authentication.Server.Domains.Client", b =>
+                {
+                    b.Navigation("ClientGrantTypes");
+
+                    b.Navigation("ClientScopes");
+
+                    b.Navigation("ClientSecrets");
                 });
 #pragma warning restore 612, 618
         }

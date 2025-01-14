@@ -1,24 +1,30 @@
+using Authentication.Server.Domains;
 using Authentication.Server.Persistence.DatabaseContext;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Authentication.Server.ResourcesValidation;
 
-public class ResourceOwnerPasswordValidator(AuthDbContext dbContext) : IResourceOwnerPasswordValidator
+public class ResourceOwnerPasswordValidator(UserManager<User> userManager) : IResourceOwnerPasswordValidator
 {
     public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
     {
         try
         {
-            //todo: create hash password service
-            var user = await dbContext.User
-                .Where(i => i.UserName == context.UserName && i.PasswordHash == context.Password)
-                .FirstOrDefaultAsync();
-
+            var user = await userManager.Users.Where(i => i.UserName == context.UserName).FirstOrDefaultAsync();
             if( user == null )
             {
-                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant);
+                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidClient);
+                return;
+            }
+
+            var isPasswordMatched = await userManager.CheckPasswordAsync(user, context.Password);
+            if (!isPasswordMatched)
+            {
+                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidClient);
+                return;
             }
 
             context.Result = new GrantValidationResult(subject: user.Id, GrantType.ResourceOwnerPassword);

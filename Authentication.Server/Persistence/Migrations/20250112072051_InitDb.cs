@@ -7,13 +7,41 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Authentication.Server.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitAuthDatabase : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
                 name: "authen");
+
+            migrationBuilder.CreateTable(
+                name: "ApiResource",
+                schema: "authen",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Secret = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApiResource", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApiScope",
+                schema: "authen",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApiScope", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -36,6 +64,7 @@ namespace Authentication.Server.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    Provider = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -54,6 +83,46 @@ namespace Authentication.Server.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Client",
+                schema: "authen",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Client", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApiScopeResource",
+                schema: "authen",
+                columns: table => new
+                {
+                    ApiResourceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ApiScopeId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApiScopeResource", x => new { x.ApiScopeId, x.ApiResourceId });
+                    table.ForeignKey(
+                        name: "FK_ApiScopeResource_ApiResource_ApiResourceId",
+                        column: x => x.ApiResourceId,
+                        principalSchema: "authen",
+                        principalTable: "ApiResource",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApiScopeResource_ApiScope_ApiScopeId",
+                        column: x => x.ApiScopeId,
+                        principalSchema: "authen",
+                        principalTable: "ApiScope",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +242,81 @@ namespace Authentication.Server.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ClientGrantType",
+                schema: "authen",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    GrantType = table.Column<string>(type: "text", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientGrantType", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientGrantType_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "authen",
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientScope",
+                schema: "authen",
+                columns: table => new
+                {
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ApiScopeId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientScope", x => new { x.ClientId, x.ApiScopeId });
+                    table.ForeignKey(
+                        name: "FK_ClientScope_ApiScope_ApiScopeId",
+                        column: x => x.ApiScopeId,
+                        principalSchema: "authen",
+                        principalTable: "ApiScope",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientScope_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "authen",
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientSecret",
+                schema: "authen",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Secret = table.Column<string>(type: "text", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientSecret", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientSecret_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalSchema: "authen",
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApiScopeResource_ApiResourceId",
+                schema: "authen",
+                table: "ApiScopeResource",
+                column: "ApiResourceId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 schema: "authen",
@@ -216,11 +360,33 @@ namespace Authentication.Server.Persistence.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientGrantType_ClientId",
+                schema: "authen",
+                table: "ClientGrantType",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientScope_ApiScopeId",
+                schema: "authen",
+                table: "ClientScope",
+                column: "ApiScopeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientSecret_ClientId",
+                schema: "authen",
+                table: "ClientSecret",
+                column: "ClientId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ApiScopeResource",
+                schema: "authen");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims",
                 schema: "authen");
@@ -242,11 +408,35 @@ namespace Authentication.Server.Persistence.Migrations
                 schema: "authen");
 
             migrationBuilder.DropTable(
+                name: "ClientGrantType",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
+                name: "ClientScope",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
+                name: "ClientSecret",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
+                name: "ApiResource",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles",
                 schema: "authen");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
+                name: "ApiScope",
+                schema: "authen");
+
+            migrationBuilder.DropTable(
+                name: "Client",
                 schema: "authen");
         }
     }

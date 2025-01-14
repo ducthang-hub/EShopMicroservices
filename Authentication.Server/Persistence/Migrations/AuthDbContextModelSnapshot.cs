@@ -17,6 +17,7 @@ namespace Authentication.Server.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("authen")
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -42,15 +43,15 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("97b1dc06-ebd0-455a-8a27-71bd04b7fbd9"),
-                            Name = "student-api-resource",
-                            Secret = new Guid("eb19ede6-a6b9-4775-96f9-a8e4fbeaf85c")
+                            Id = new Guid("5b9aaeb4-d86c-4b2b-91ff-6df237697b77"),
+                            Name = "customer-api-resource",
+                            Secret = new Guid("efd456ce-d33b-49f7-bb18-9019338fa79a")
                         },
                         new
                         {
-                            Id = new Guid("e895aaeb-d696-4d8a-978c-3718dfbd5843"),
-                            Name = "teacher-api-resource",
-                            Secret = new Guid("c30fd222-0e8e-47ff-93cd-7719db5ab2e3")
+                            Id = new Guid("5ed18100-4476-4fd4-ac74-4218e939e3fe"),
+                            Name = "shop-owner-api-resource",
+                            Secret = new Guid("9c232a28-07ae-4405-96e0-94e57ffb13b0")
                         });
                 });
 
@@ -75,15 +76,15 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d14f2be1-1abf-4c79-9fe0-19980ac6cd29"),
+                            Id = new Guid("75f824ab-b599-4519-8bcc-37bea9ad7cd9"),
                             DisplayName = "Student Api Scope",
-                            Name = "student-scope"
+                            Name = "customer-scope"
                         },
                         new
                         {
-                            Id = new Guid("538a056c-ae30-4ea4-8cc9-6adff622dded"),
+                            Id = new Guid("7b3b5167-24a4-41e0-8648-48f7f02dd44b"),
                             DisplayName = "Teacher Api Scope",
-                            Name = "teacher-scope"
+                            Name = "shop-owner-scope"
                         });
                 });
 
@@ -100,6 +101,18 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasIndex("ApiResourceId");
 
                     b.ToTable("ApiScopeResource", "authen");
+
+                    b.HasData(
+                        new
+                        {
+                            ApiScopeId = new Guid("75f824ab-b599-4519-8bcc-37bea9ad7cd9"),
+                            ApiResourceId = new Guid("5b9aaeb4-d86c-4b2b-91ff-6df237697b77")
+                        },
+                        new
+                        {
+                            ApiScopeId = new Guid("7b3b5167-24a4-41e0-8648-48f7f02dd44b"),
+                            ApiResourceId = new Guid("5ed18100-4476-4fd4-ac74-4218e939e3fe")
+                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.Client", b =>
@@ -119,13 +132,13 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4cb4b753-a1ac-476d-83d1-3b001899866d"),
-                            ClientId = "ewb-student-web"
+                            Id = new Guid("d120b22d-85e5-4e6f-80fe-ec49e2138d3c"),
+                            ClientId = "eshop-web"
                         },
                         new
                         {
-                            Id = new Guid("eb2578fb-db26-4de4-b876-37244f97a6ca"),
-                            ClientId = "ewb-teacher"
+                            Id = new Guid("c49ab291-6e10-49bc-a796-848f22a4936f"),
+                            ClientId = "eshop-mobile"
                         });
                 });
 
@@ -147,6 +160,14 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("ClientGrantType", "authen");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("eb3cea84-46d3-428f-b5ea-5c42b366c60f"),
+                            ClientId = new Guid("d120b22d-85e5-4e6f-80fe-ec49e2138d3c"),
+                            GrantType = "password"
+                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ClientScope", b =>
@@ -162,6 +183,18 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasIndex("ApiScopeId");
 
                     b.ToTable("ClientScope", "authen");
+
+                    b.HasData(
+                        new
+                        {
+                            ClientId = new Guid("d120b22d-85e5-4e6f-80fe-ec49e2138d3c"),
+                            ApiScopeId = new Guid("75f824ab-b599-4519-8bcc-37bea9ad7cd9")
+                        },
+                        new
+                        {
+                            ClientId = new Guid("c49ab291-6e10-49bc-a796-848f22a4936f"),
+                            ApiScopeId = new Guid("7b3b5167-24a4-41e0-8648-48f7f02dd44b")
+                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ClientSecret", b =>
@@ -182,6 +215,20 @@ namespace Authentication.Server.Persistence.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("ClientSecret", "authen");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("20dd1bb6-e722-41ec-84c4-0d66ac95aa6b"),
+                            ClientId = new Guid("d120b22d-85e5-4e6f-80fe-ec49e2138d3c"),
+                            Secret = "client-web-secret"
+                        },
+                        new
+                        {
+                            Id = new Guid("825c7420-15ba-4d07-87d7-54042b0de9c8"),
+                            ClientId = new Guid("c49ab291-6e10-49bc-a796-848f22a4936f"),
+                            Secret = "client-mobile-secret"
+                        });
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.User", b =>
@@ -274,7 +321,7 @@ namespace Authentication.Server.Persistence.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AspNetRoles", "authen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -299,7 +346,7 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", "authen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -324,7 +371,7 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", "authen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -346,7 +393,7 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", "authen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -361,7 +408,7 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", "authen");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -380,7 +427,7 @@ namespace Authentication.Server.Persistence.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", "authen");
                 });
 
             modelBuilder.Entity("Authentication.Server.Domains.ApiScopeResource", b =>

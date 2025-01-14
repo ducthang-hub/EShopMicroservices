@@ -17,20 +17,20 @@ namespace Authentication.Server.Persistence.Configurations
 
             builder.Property(i => i.DisplayName).IsRequired();
 
-            // builder.HasData(
-            //     new ApiScope
-            //     {
-            //         Id = Guid.NewGuid(),
-            //         Name = "student-scope",
-            //         DisplayName  = "Student Api Scope"
-            //     },
-            //     new ApiScope
-            //     {
-            //         Id = Guid.NewGuid(),
-            //         Name = "teacher-scope",
-            //         DisplayName = "Teacher Api Scope"
-            //     }
-            // );
+            builder.HasData(
+                new ApiScope
+                {
+                    Id = Guid.Parse("75f824ab-b599-4519-8bcc-37bea9ad7cd9"),
+                    Name = "customer-scope",
+                    DisplayName  = "Student Api Scope"
+                },
+                new ApiScope
+                {
+                    Id = Guid.Parse("7b3b5167-24a4-41e0-8648-48f7f02dd44b"),
+                    Name = "shop-owner-scope",
+                    DisplayName = "Teacher Api Scope"
+                }
+            );
         }
     }
 }

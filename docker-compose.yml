@@ -33,6 +33,12 @@
   #    depends_on:
   #      - database
 
+  authentication.server:
+    image: authentication.server
+    build:
+      context: .
+      dockerfile: Authentication.Server/Dockerfile
+
   database:
     image: postgres:latest
 

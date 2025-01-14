@@ -1,4 +1,14 @@
 ﻿services:
+  authentication.server:
+    container_name: authentication.server
+    env_file:
+      - ./.env
+    ports:
+      - "6006:80"
+      - "6056:443"
+    depends_on:
+      - database
+
   database:
     container_name: database
     env_file:
