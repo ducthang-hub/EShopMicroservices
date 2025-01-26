@@ -10,43 +10,92 @@
   #   build:
   #     context: .
   #     dockerfile: Discount.GRPC/Dockerfile
+  #   env_file:
+  #     - ./Discount.GRPC/.env
+  #   depends_on:
+  #     - database
 
-  # basket.api:
-  #   image: basket.api
-  #   build:
-  #     context: .
-  #     dockerfile: Basket.API/Dockerfile
+  basket.api:
+    image: eshop.basket.api
+    build:
+      context: .
+      dockerfile: Basket.API/Dockerfile
+    container_name: basket.api
+    env_file:
+      - ./Basket.API/.env
+    ports:
+      - 6002:6002
+      - 6052:6052
+    depends_on:
+      - database
+      # - discount.grpc
 
-  # ordering.api:
-  #   image: ordering.api
-  #   build:
-  #     context: .
-  #     dockerfile: Ordering.API/Dockerfile
+      # ordering.api:
+      #   image: ordering.api
+      #   build:
+      #     context: .
+      #     dockerfile: Ordering.API/Dockerfile
 
-  #  catalog.api:
-  #    image: dducthang/eshop.catalog.api:v0.1
-  #    build:
-  #      context: .
-  #      dockerfile: Catalog.API/Dockerfile
-  #    ports:
-  #      - 5001:5001
-  #    depends_on:
-  #      - database
+  catalog.api:
+    image: eshop.catalog.api
+    build:
+      context: .
+      dockerfile: Catalog.API/Dockerfile
+    container_name: catalog.api
+    env_file:
+      - ./Catalog.API/.env
+    ports:
+      - 6001:6001
+      - 6051:6051
+    depends_on:
+      - database
+    # volumes:
+    #   - ./Catalog.API:/app # Bind mount your source code into the container
+    #   - /app/bin # Optional: Prevent rebuild issues with bin directory
+    #   - /app/obj
+    # command: dotnet watch run --urls "https://+:6001;http://+:6051" # Watch for changes
 
   authentication.server:
-    image: authentication.server
+    image: eshop.authentication.server
     build:
       context: .
       dockerfile: Authentication.Server/Dockerfile
+    container_name: authentication.server
+    env_file:
+      - ./Authentication.Server/.env
+    ports:
+      - 6006:6006
+      - 6056:6056
+    depends_on:
+      - database
 
   database:
     image: postgres:latest
+    env_file:
+      - ./.env
+    ports:
+      - 5432:5432
+    volumes:
+      - eshop_volume:/var/lib/postgresql/data
 
   redis_eshop:
     image: redis:latest
+    env_file:
+      - ./.env
+    ports:
+      - 6380:6379
+    volumes:
+      - redis_eshop_volume:/data
 
   rabbitmq_eshop:
     image: rabbitmq:3.8-management
+    env_file:
+      - ./.env
+    ports:
+      - 15673:15672
+      - 5673:5672
+    volumes:
+      - rabbitmq_eshop_volume:/var/lib/rabbitmq
 
 volumes:
   eshop_volume:

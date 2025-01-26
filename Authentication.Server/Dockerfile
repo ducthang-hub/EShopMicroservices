@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 443
-EXPOSE 80
+EXPOSE 6006
+EXPOSE 6056
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 RUN dotnet dev-certs https --trust
@@ -23,8 +23,6 @@ WORKDIR "/src/Authentication.Server"
 RUN dotnet publish "Authentication.Server.csproj" -c Release -o /app/publish  /p:UseAppHost=false
 
 FROM base AS final
-#ENV ASPNETCORE_ENVIRONMENT Development
-#ENV ASPNETCORE_URLS="https://+:443;http://+:80"
 WORKDIR /app
 COPY --from=build /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 COPY --from=publish /app/publish .

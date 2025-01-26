@@ -17,10 +17,7 @@ public class GetAllProductsHandler
         try
         {
             var products = await dbContext.Products.ToListAsync(cancellationToken);
-            response.Data = new
-            {
-                Products = products
-            };
+            response.Products = products;
             response.Status = HttpStatusCode.OK;
         }
         catch (Exception ex)

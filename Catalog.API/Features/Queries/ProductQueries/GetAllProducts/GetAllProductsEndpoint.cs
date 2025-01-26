@@ -20,8 +20,9 @@ public class GetAllProductsEndpoint : ICarterModule
                 logger.LogError(ex, $"Error: {ex.Message}");
                 response.Message = ex.Message;
             }
+
             return response;
         })
-        .RequireAuthorization("student");;
+        .RequireAuthorization("customer");
     }
 }

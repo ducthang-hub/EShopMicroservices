@@ -1,3 +1,4 @@
+using Authentication.Server.DTOs;
 using BuildingBlocks.Contracts;
 using BuildingBlocks.CQRS;
 
@@ -5,6 +6,7 @@ namespace Authentication.Server.Features.Login;
 
 public class LoginResponse : ErrorResponse
 {
+    public AuthTokensDto Tokens { get; set; }
 }
 
 public class LoginRequest

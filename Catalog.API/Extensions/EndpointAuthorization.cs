@@ -1,4 +1,3 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,39 +7,36 @@ public static class EndpointAuthorization
 {
     public static IServiceCollection AddEndpointAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        var authority = configuration["IdentitySettings:Authority"];
-        var authSecret = configuration["IdentitySettings:SigningKey"];
-
-        if (authSecret != null)
-        {
-            var key = Encoding.ASCII.GetBytes(authSecret);
-
-            services.AddAuthentication(x =>
+        var authority = configuration["Services:Authentication.Server"];
+        Console.WriteLine($"Authority {authority}");
+        
+        services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
+            {
+                option.Authority = authority;
+                option.RequireHttpsMetadata = false;
+                option.SaveToken = true;
+                option.TokenValidationParameters = new TokenValidationParameters
                 {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
-                {
-                    option.Authority = authority;
-                    option.RequireHttpsMetadata = false;
-                    option.SaveToken = true;
-                    option.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = false,
-                        ValidateIssuerSigningKey = true,
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                    };
-                });
-        }
+                    ValidateAudience = false,
+                    // ValidateIssuer = false,
+                    // ValidateIssuerSigningKey = true,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                };
+            });
+
 
         services.AddAuthorizationBuilder()
-            .AddPolicy("student", policy =>
+            .AddPolicy("customer", policy =>
             {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("client_id", "ewb-student-web"); 
-                policy.RequireClaim("scope", "student-scope");
+                policy.RequireAuthenticatedUser();  
+                policy.RequireClaim("client_id", "eshop-web"); 
+                policy.RequireClaim("scope", "customer-scope");
                 // policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", nameof(Common.SYSTEMROLES.user));
             });
 

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Basket.API.Domains;
-using Basket.API.DTOs;
+using Basket.API.Models.DTOs;
 using Basket.API.Persistence.Repositories;
 using Mapster;
 using MediatR;

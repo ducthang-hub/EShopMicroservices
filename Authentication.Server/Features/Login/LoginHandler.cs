@@ -1,23 +1,29 @@
 using System.Net;
-using Authentication.Server.Domains;
-using Authentication.Server.Persistence.DatabaseContext;
+using Authentication.Server.DTOs;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.Helpers;
 using IdentityModel.Client;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Authentication.Server.Features.Login;
 
-public class LoginHandler
-    (
-        HttpClient httpClient,
-        IConfiguration configuration,
-        ILogger<LoginHandler> logger,
-        IHttpContextAccessor httpContextAccessor
-    )
-    : ICommandHandler<LoginCommand, LoginResponse>
+public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
 {
+    private readonly HttpClient _httpClient;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<LoginHandler> _logger;
+    public LoginHandler
+    (
+        IConfiguration configuration,
+        ILogger<LoginHandler> logger
+    )
+    {
+        HttpClientHandler clientHandler = new HttpClientHandler();
+        clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+        _httpClient = new HttpClient(clientHandler);
+
+        _configuration = configuration;
+        _logger = logger;
+    }
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var payload = request.Payload;
@@ -28,11 +34,11 @@ public class LoginHandler
         try
         {
             var requestScheme = payload.Scheme;
-            var origin = configuration[$"Application:{requestScheme}"];
+            var origin = _configuration[$"Application:{requestScheme}"];
             
             Console.WriteLine($"{funcName} client origin {origin}");
             
-            var tokenResponse = await httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
+            var tokenResponse = await _httpClient.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
                 Address = $"{origin}/connect/token",
                 ClientId = payload.ClientId,
@@ -57,19 +63,19 @@ public class LoginHandler
                 response.Data = tokenResponse;
                 return response;
             }
-            var output = new
+            var tokens = new AuthTokensDto()
             {
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken,
             };
 
             response.Status = HttpStatusCode.OK;
-            response.Data = output;
+            response.Tokens = tokens;
             return response;
         }
         catch(Exception ex)
         {
-            ex.LogError(logger);
+            ex.LogError(_logger);
         }
 
         return response;

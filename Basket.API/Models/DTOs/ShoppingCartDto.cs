@@ -1,4 +1,4 @@
-﻿namespace Basket.API.DTOs;
+﻿namespace Basket.API.Models.DTOs;
 
 public class ShoppingCartDto
 {
