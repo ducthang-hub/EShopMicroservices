@@ -20,7 +20,9 @@ builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
-builder.Services.AddEndpointAuthorization(builder.Configuration);
+builder.Services
+    .AddEndpointAuthorization(builder.Configuration)
+    .AddCustomHttpClient(builder.Configuration);
 
 var app = builder.Build();
 

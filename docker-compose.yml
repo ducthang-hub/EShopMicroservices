@@ -5,15 +5,16 @@
   #     context: .
   #     dockerfile: Discount.API/Dockerfile
 
-  # discount.grpc:
-  #   image: discount.grpc
-  #   build:
-  #     context: .
-  #     dockerfile: Discount.GRPC/Dockerfile
-  #   env_file:
-  #     - ./Discount.GRPC/.env
-  #   depends_on:
-  #     - database
+  discount.grpc:
+    image: eshop.discount.grpc
+    build:
+      context: .
+      dockerfile: Discount.GRPC/Dockerfile
+    container_name: discount.grpc
+    env_file:
+      - ./Discount.GRPC/.env
+    depends_on:
+      - database
 
   basket.api:
     image: eshop.basket.api

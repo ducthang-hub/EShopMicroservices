@@ -40,10 +40,12 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IServiceCollection ConfigIdentityServer(this IServiceCollection services)
+    public static IServiceCollection ConfigIdentityServer(this IServiceCollection services, IConfiguration configuration)
     {
+        var issuer = configuration["IdentitySettings:Issuer"];
         services.AddIdentityServer(opts =>
         {
+            // opts.IssuerUri = issuer;
             opts.Events.RaiseErrorEvents = true;
             opts.Events.RaiseInformationEvents = true;
             opts.Events.RaiseFailureEvents = true;
@@ -61,5 +63,4 @@ public static class ServiceExtensions
         
         return services;
     }
-    
 }

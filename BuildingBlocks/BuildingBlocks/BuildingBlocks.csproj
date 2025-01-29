@@ -33,10 +33,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="IntegrationEvents\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\BuildingBlocks.Messaging\BuildingBlocks.Messaging.csproj" />
     </ItemGroup>
 

@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .ConfigDatabase(builder.Configuration)
     .ConfigAuthentication()
-    .ConfigIdentityServer()
+    .ConfigIdentityServer(builder.Configuration)
     .AddMediatR(typeof(Program).Assembly)
     .AddCarter();
 

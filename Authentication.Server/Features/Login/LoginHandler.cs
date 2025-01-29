@@ -14,13 +14,11 @@ public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
     public LoginHandler
     (
         IConfiguration configuration,
-        ILogger<LoginHandler> logger
+        ILogger<LoginHandler> logger,
+        HttpClient httpClient
     )
     {
-        HttpClientHandler clientHandler = new HttpClientHandler();
-        clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-        _httpClient = new HttpClient(clientHandler);
-
+        _httpClient = httpClient;
         _configuration = configuration;
         _logger = logger;
     }

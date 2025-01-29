@@ -4,7 +4,7 @@ using BuildingBlocks.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Authentication.Server.Feature.Commands.RegisterUser;
+namespace Authentication.Server.Features.RegisterUser;
 
 public class RegisterUserHandler
     (

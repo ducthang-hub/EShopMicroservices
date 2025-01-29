@@ -1,7 +1,7 @@
 using BuildingBlocks.Contracts;
 using MediatR;
 
-namespace Authentication.Server.Feature.Commands.RegisterUser;
+namespace Authentication.Server.Features.RegisterUser;
 
 public class RegisterUserResponse : ErrorResponse
 {

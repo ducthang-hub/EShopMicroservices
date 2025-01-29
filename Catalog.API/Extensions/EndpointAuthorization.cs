@@ -8,6 +8,7 @@ public static class EndpointAuthorization
     public static IServiceCollection AddEndpointAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
         var authority = configuration["Services:Authentication.Server"];
+        
         Console.WriteLine($"Authority {authority}");
         
         services.AddAuthentication(x =>
@@ -17,14 +18,13 @@ public static class EndpointAuthorization
             })
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
             {
-                option.Authority = authority;
+                option.Authority = authority; // Authority will overrule the ValidIssuer
                 option.RequireHttpsMetadata = false;
                 option.SaveToken = true;
                 option.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
-                    // ValidateIssuer = false,
-                    // ValidateIssuerSigningKey = true,
+                    ValidateIssuerSigningKey = true,
                     RequireExpirationTime = true,
                     ValidateLifetime = true,
                 };
@@ -42,4 +42,6 @@ public static class EndpointAuthorization
 
         return services;
     }
+    
+    
 }

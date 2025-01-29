@@ -1,13 +1,17 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 6003
+EXPOSE 6053
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+RUN dotnet dev-certs https --trust
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
 COPY ["Discount.GRPC/Discount.GRPC.csproj", "Discount.GRPC/"]
+RUN dotnet restore "BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj"
+RUN dotnet restore "BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj"
 RUN dotnet restore "Discount.GRPC/Discount.GRPC.csproj"
 COPY . .
 WORKDIR "/src/Discount.GRPC"
@@ -19,5 +23,6 @@ RUN dotnet publish "Discount.GRPC.csproj" -c $BUILD_CONFIGURATION -o /app/publis
 
 FROM base AS final
 WORKDIR /app
+COPY --from=build /root/.dotnet/corefx/cryptography/x509stores/my/* /root/.dotnet/corefx/cryptography/x509stores/my/
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Discount.GRPC.dll"]

@@ -6,6 +6,7 @@ using BuildingBlocks.Extensions.Extensions;
 using Carter;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services
     .AddMediatR(typeof(Program).Assembly)
     .AddCustomRedisCache(builder.Configuration)

@@ -1,7 +1,7 @@
 using Carter;
 using MediatR;
 
-namespace Authentication.Server.Feature.Commands.RegisterUser;
+namespace Authentication.Server.Features.RegisterUser;
 
 public class RegisterUserEndpoint : ICarterModule
 {
