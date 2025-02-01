@@ -18,7 +18,11 @@ public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
         HttpClient httpClient
     )
     {
-        _httpClient = httpClient;
+        // var httpClientHandler = new HttpClientHandler();
+        // httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+        // _httpClient = new HttpClient(httpClientHandler);
+
+        _httpClient = httpClient;   
         _configuration = configuration;
         _logger = logger;
     }

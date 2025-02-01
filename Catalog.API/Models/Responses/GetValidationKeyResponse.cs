@@ -1,11 +1,10 @@
 using System.Net;
+using BuildingBlocks.Contracts;
 using Catalog.API.DTOs;
 
 namespace Catalog.API.Models.Responses;
 
-public class GetValidationKeyResponse
+public class GetValidationKeyResponse : ErrorResponse
 {
-    public HttpStatusCode Status { get; set; } = HttpStatusCode.InternalServerError;
-    public string Message { get; set; } = default!;
     public AuthTokenDto Tokens { get; set; }
 }

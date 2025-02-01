@@ -3,6 +3,11 @@ WORKDIR /app
 EXPOSE 6001
 EXPOSE 6051
 
+# Copy SSL certificate and install it
+WORKDIR /https
+COPY server.crt /usr/local/share/ca-certificates/server.crt
+RUN update-ca-certificates
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 RUN dotnet dev-certs https --trust

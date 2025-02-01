@@ -7,7 +7,7 @@ public static class EndpointAuthorization
 {
     public static IServiceCollection AddEndpointAuthorization(this IServiceCollection services, IConfiguration configuration)
     {
-        var authority = configuration["Services:Authentication.Server"];
+        var authority = configuration["Services:AuthenticationService:BaseAddress"];
         
         Console.WriteLine($"Authority {authority}");
         

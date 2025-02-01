@@ -1,3 +1,4 @@
+using System.Net;
 using BuildingBlocks.HttpClient.Extension;
 using BuildingBlocks.HttpClient.Implement;
 using Carter;
@@ -19,17 +20,23 @@ public class GetValidationKeyEndpoint : ICarterModule
             CancellationToken cancellationToken
         ) =>
         {
+            var response = new GetValidationKeyResponse();
+            
             try
             {
-                var response = await httpClient.PostAsync<GetValidationKeyRequest, GetValidationKeyResponse>("authen/login", request, cancellationToken);
-                var result = response?.Tokens;
-                return result;
+                var getKeyResponse  = await httpClient.PostAsync<GetValidationKeyRequest, GetValidationKeyResponse>("authen/login", request, cancellationToken);
+                if (getKeyResponse is not null)
+                {
+                    response = getKeyResponse;
+                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return new AuthTokenDto();
+                response.Message = $"{ex.Message}";
             }
+
+            return response;
         });
     }
 }
