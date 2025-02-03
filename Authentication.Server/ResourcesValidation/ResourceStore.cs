@@ -88,13 +88,13 @@ public class ResourceStore(AuthDbContext dbContext) : IResourceStore
         }
     }
 
-    public async Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
+    public Task<IEnumerable<IdentityResource>> FindIdentityResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
     {
-        return new List<IdentityResource>();
+        return Task.FromResult<IEnumerable<IdentityResource>>(new List<IdentityResource>());
     }
 
-    public async Task<IdentityServer4.Models.Resources> GetAllResourcesAsync()
+    public Task<Resources> GetAllResourcesAsync()
     {
-        return new IdentityServer4.Models.Resources();
+        return Task.FromResult(new Resources());
     }
 }

@@ -1,5 +1,4 @@
 using Authentication.Server.Domains;
-using Authentication.Server.Persistence.DatabaseContext;
 using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;

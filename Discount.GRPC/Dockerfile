@@ -3,6 +3,14 @@ WORKDIR /app
 EXPOSE 6003
 EXPOSE 6053
 
+# Copy SSL certificate
+WORKDIR /https
+COPY server.pfx /https/server.pfx
+
+# Install CA certificates for trusting SSL certificates
+COPY server.crt /usr/local/share/ca-certificates/server.crt
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 RUN dotnet dev-certs https --trust
 ARG BUILD_CONFIGURATION=Release

@@ -27,9 +27,8 @@ public class ProfileService
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
 
-            claims.Add(new Claim(CustomClaimTypes.UserId, user.Id ?? string.Empty));
+            claims.Add(new Claim(CustomClaimTypes.UserId, user.Id));
             claims.Add(new Claim(CustomClaimTypes.Email, user.Email ?? string.Empty));
-            claims.Add(new Claim(CustomClaimTypes.Phone, user.PhoneNumber ?? string.Empty));
             claims.Add(new Claim(CustomClaimTypes.Provider, user.Provider.ToString()));
             claims.Add(new Claim(CustomClaimTypes.SecurityStamp, user.SecurityStamp ?? string.Empty));
 

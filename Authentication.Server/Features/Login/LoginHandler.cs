@@ -18,10 +18,6 @@ public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
         HttpClient httpClient
     )
     {
-        // var httpClientHandler = new HttpClientHandler();
-        // httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-        // _httpClient = new HttpClient(httpClientHandler);
-
         _httpClient = httpClient;   
         _configuration = configuration;
         _logger = logger;
@@ -54,7 +50,7 @@ public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
             {
                 Console.WriteLine($"{funcName} Token Response Error: {tokenResponse.Error}");
                 response.Message =
-                    $"ErrorDescription: {tokenResponse.ErrorDescription}\nErrorType: {tokenResponse.ErrorType.ToString()}\nRawJson: {tokenResponse.Raw}";
+                    $"ErrorDescription: {tokenResponse.ErrorDescription}\\nErrorType: {tokenResponse.ErrorType.ToString()}\\nRawJson: {tokenResponse.Raw}";
                 response.Status = HttpStatusCode.BadRequest;
                 return response;
             }

@@ -13,6 +13,9 @@
     container_name: discount.grpc
     env_file:
       - ./Discount.GRPC/.env
+    ports:
+      - 6003:6003
+      - 6053:6053
     depends_on:
       - database
 

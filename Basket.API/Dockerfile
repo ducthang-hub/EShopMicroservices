@@ -3,6 +3,10 @@ WORKDIR /app
 EXPOSE 5001
 EXPOSE 5051
 
+# Install CA certificates for trusting SSL certificates
+COPY server.crt /usr/local/share/ca-certificates/server.crt
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
