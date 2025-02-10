@@ -21,5 +21,5 @@ public static class ServiceExtensions
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             });
         return services;
-    } 
+    }
 }

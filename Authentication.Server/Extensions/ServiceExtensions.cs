@@ -6,6 +6,7 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Authentication.Server.Extensions;
 
@@ -13,9 +14,13 @@ public static class ServiceExtensions
 {
     public static IServiceCollection ConfigDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContextPool<AuthDbContext>(opt =>
+        var dataSource = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("DatabaseConnection"))
+            .EnableDynamicJson()
+            .Build();
+
+        services.AddDbContextPool<AuthDbContext>((option) =>
         {
-            opt.UseNpgsql(configuration.GetConnectionString("DatabaseConnection"));
+            option.UseNpgsql(dataSource);
         });
         
         services.AddIdentity<User, IdentityRole>()

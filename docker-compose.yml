@@ -32,8 +32,9 @@
       - 6052:6052
     depends_on:
       - database
-      # - discount.grpc
-
+      - discount.grpc
+      - rabbitmq_eshop
+      - redis_eshop
       # ordering.api:
       #   image: ordering.api
       #   build:

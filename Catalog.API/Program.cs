@@ -3,9 +3,7 @@ using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.PipelineBehaviors;
 using Carter;
 using Catalog.API.Extensions;
-using Catalog.API.Persistence.DatabaseContext;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +13,11 @@ builder.Services.AddCarter()
         typeof(ValidationPipelineBehavior<,>),
         typeof(LoggingBehavior<,>)
     ]);
-
-builder.Services.AddDbContextPool<CatalogDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("DatabaseConnection")));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services
+    .AddDatabaseConnection(builder.Configuration)
     .AddEndpointAuthorization(builder.Configuration)
     .AddCustomHttpClient(builder.Configuration);
 
