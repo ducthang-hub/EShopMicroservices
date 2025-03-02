@@ -1,10 +1,4 @@
 ﻿services:
-  # discount.api:
-  #   image: discount.api
-  #   build:
-  #     context: .
-  #     dockerfile: Discount.API/Dockerfile
-
   discount.grpc:
     image: eshop.discount.grpc
     build:
@@ -17,7 +11,7 @@
       - 6003:6003
       - 6053:6053
     depends_on:
-      - database
+      - eshop.database
 
   basket.api:
     image: eshop.basket.api
@@ -31,10 +25,10 @@
       - 6002:6002
       - 6052:6052
     depends_on:
-      - database
+      - eshop.database
       - discount.grpc
-      - rabbitmq_eshop
-      - redis_eshop
+      - eshop.rabbitmq
+      - eshop.redis
       # ordering.api:
       #   image: ordering.api
       #   build:
@@ -53,7 +47,7 @@
       - 6001:6001
       - 6051:6051
     depends_on:
-      - database
+      - eshop.database
     # volumes:
     #   - ./Catalog.API:/app # Bind mount your source code into the container
     #   - /app/bin # Optional: Prevent rebuild issues with bin directory
@@ -72,19 +66,21 @@
       - 6006:6006
       - 6056:6056
     depends_on:
-      - database
+      - eshop.database
 
-  database:
+  eshop.database:
     image: postgres:latest
     env_file:
       - ./.env
+    container_name: eshop.database
     ports:
       - 5432:5432
     volumes:
       - eshop_volume:/var/lib/postgresql/data
 
-  redis_eshop:
+  eshop.redis:
     image: redis:latest
+    container_name: eshop.redis
     env_file:
       - ./.env
     ports:
@@ -92,8 +88,9 @@
     volumes:
       - redis_eshop_volume:/data
 
-  rabbitmq_eshop:
+  eshop.rabbitmq:
     image: rabbitmq:3.8-management
+    container_name: eshop.rabbitmq
     env_file:
       - ./.env
     ports:

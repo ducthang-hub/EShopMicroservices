@@ -50,7 +50,7 @@ public class LoginHandler : ICommandHandler<LoginCommand, LoginResponse>
             {
                 Console.WriteLine($"{funcName} Token Response Error: {tokenResponse.Error}");
                 response.Message =
-                    $"ErrorDescription: {tokenResponse.ErrorDescription}\\nErrorType: {tokenResponse.ErrorType.ToString()}\\nRawJson: {tokenResponse.Raw}";
+                    $"ErrorDescription: {tokenResponse.ErrorDescription}\nErrorType: {tokenResponse.ErrorType.ToString()}\nRawJson: {tokenResponse.Raw}";
                 response.Status = HttpStatusCode.BadRequest;
                 return response;
             }
